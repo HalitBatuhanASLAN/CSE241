@@ -6,12 +6,12 @@
 
 using namespace std;
 
-class Formula
+class FormulaParser
 {
     public:
         
     private:
-        Spreadsheet tmp;
+        string input_cell;
 };
 
 
