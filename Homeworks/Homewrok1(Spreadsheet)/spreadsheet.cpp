@@ -1,4 +1,6 @@
 #include "Spreadsheet.h"
+#include "AnsiTerminal.h"
+
 #include<iostream>
 #include<vector>
 #include<string>
@@ -24,12 +26,22 @@ string Spreadsheet::getFrame(int line, int column)
 {return frame[line][column].getCell();}
 
 
-void Spreadsheet::print_frame()
+void Spreadsheet::print_frame(AnsiTerminal& terminal)
 {
+    int rowStart = 1;
+    int colStart = 1;
+    int cellWidth = 10;
+    int rowHeight = 1;
     for(int i = 0; i<getLine(); i++)
     {
         for(int j = 0; j<getColumn(); j++)
-            cout << frame[i][j] << "|";
+        {
+            string cellData = getFrame(i,j);
+            int terminalRow = rowStart + i * rowHeight ;
+            int terminalCol = colStart + j * cellWidth ;
+            string spaces(cellWidth - static_cast<int>(cellData.size()) - 1,' ');
+            terminal.printAt(terminalRow, terminalCol, cellData + spaces + '|');
+        }
         cout << endl;
     }
 }

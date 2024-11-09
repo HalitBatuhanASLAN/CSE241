@@ -5,6 +5,7 @@
 
 #include<iostream>
 #include<vector>
+#include "AnsiTerminal.h"
 using namespace std;
 
 class Spreadsheet
@@ -13,7 +14,7 @@ class Spreadsheet
         Spreadsheet(int line,int column);
         int getLine();
         int getColumn();
-        void print_frame();
+        void print_frame(AnsiTerminal& terminal);
 
         void editCell(int line, int column,string value);
         string getFrame(int line, int column);
