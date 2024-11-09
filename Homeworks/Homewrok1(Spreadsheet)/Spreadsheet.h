@@ -10,12 +10,13 @@ using namespace std;
 class Spreadsheet
 {
     public:
+        Spreadsheet(int line,int column);
         int getLine();
         int getColumn();
         void print_frame();
 
         void editCell(int line, int column,string value);
-        string getCell(int line, int column);
+        string getFrame(int line, int column);
 
         ~Spreadsheet();
     private:
