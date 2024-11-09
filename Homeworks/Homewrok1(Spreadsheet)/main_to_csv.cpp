@@ -29,6 +29,8 @@ int main() {
         key = terminal.getSpecialKey();
 
         if (key == '0') {
+            int pre_row = row;
+            int pre_col = col;
             while (true) {
                 key = cin.get();
                 if (key == '\n') {
@@ -52,7 +54,10 @@ int main() {
                     }
                 }
             }
-        } else {
+            row = pre_row;
+            col = pre_col;
+        }
+        else {
             terminal.printAt(row, col, " ");
             switch (key) {
                 case 'U': row = (row > 1) ? row - 1 : row; break;

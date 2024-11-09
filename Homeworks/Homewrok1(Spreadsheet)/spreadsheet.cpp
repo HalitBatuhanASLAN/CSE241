@@ -40,7 +40,12 @@ void Spreadsheet::print_frame(AnsiTerminal& terminal)
             int terminalRow = rowStart + i * rowHeight ;
             int terminalCol = colStart + j * cellWidth ;
             string spaces(cellWidth - static_cast<int>(cellData.size()) - 1,' ');
-            terminal.printAt(terminalRow, terminalCol, cellData + spaces + '|');
+            if(frame[i][j].get_dt() != Formula)
+                terminal.printAt(terminalRow, terminalCol, cellData + spaces + '|');
+            else
+            {
+                terminal.printAt(terminalRow, terminalCol, "formu" + spaces + '|');
+            }
         }
         cout << endl;
     }
