@@ -19,7 +19,7 @@ Spreadsheet File::load_data(string file_name)
     int line_counter = 0,column_counter = 0;
     while(getline(file,line))
     {
-        cout << "inner line is: " << line << endl;
+        //cout << "inner line is: " << line << endl;
         string str;
         for(char character : line)
         {

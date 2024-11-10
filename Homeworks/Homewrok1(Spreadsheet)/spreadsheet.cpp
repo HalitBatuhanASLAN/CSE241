@@ -55,15 +55,22 @@ void Spreadsheet::print_frame(AnsiTerminal& terminal)
                 //formula_type = parser.get_type(i,j);
                 cout << getFrame(i,j);
                 cout << parser.get_operand_value(frame[i][j].getCell());*/
-                parser.relevant_func();
+                parser.relevant_func(i,j);
                 //terminal.printAt(terminalRow, terminalCol, "formu" + spaces + '|');
                 //terminal.printAt(terminalRow, terminalCol,frame[i][j].getCell() + spaces + '|');
-                terminal.printAt(terminalRow, terminalCol,to_string(parser.get_operand_value("B2")) + spaces + '|');
+                /*get operand value is working
+                terminal.printAt(terminalRow, terminalCol,to_string(parser.get_operand_value("E5")) + spaces + '|');*/
+                terminal.printAt(terminalRow, terminalCol,to_string(frame[2][3].getNum()) + spaces + '|');
+
             }    
         }
         cout << endl;
     }
 }
 
+void Spreadsheet::set_num(int i,int j, double new_num)
+{
+    frame[i][j].setNum(new_num);
+}
 
 Spreadsheet::~Spreadsheet(){}

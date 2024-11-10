@@ -27,7 +27,8 @@ class Cell
         friend bool is_formula(const string& str);*/
         bool is_num();
         bool is_formula();
-
+        void setNum(double new_num);
+        double getNum();
 
         friend ostream& operator<<(ostream& out,Cell &tmp);
         ~Cell();

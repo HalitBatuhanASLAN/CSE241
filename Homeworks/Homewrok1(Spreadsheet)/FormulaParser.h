@@ -24,11 +24,11 @@ class FormulaParser
         FormulaParser(Spreadsheet& sheet) : tmp(sheet) {}
         void set_type(int i,int j);
         formula_type get_type(int i,int j);
-        void relevant_func();
+        void relevant_func(int i,int j);
         
         
         void Sum();
-        void other_calc();
+        void other_calc(int i,int j);
         double get_operand_value(const string operand);
     private:
         formula_type type;

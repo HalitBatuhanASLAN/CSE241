@@ -37,10 +37,16 @@ ostream& operator<<(ostream& out,Cell &tmp)
 
 void Cell::set_dt()
 {
-    if(is_num())
-        dt = Number;
-    else if(is_formula())
+    if(is_formula())
         dt = Formula;
+    else if(is_num())
+    {    
+        /*last changes happened here*/
+        dt = Number;
+        string str = getCell();
+        double new_num = stod(str);
+        setNum(new_num);
+    }
     else
         dt = str_type;
 }
@@ -56,6 +62,16 @@ bool Cell::is_num()
 bool Cell::is_formula()
 {
     return(inner_cell[0] == '=');
+}
+
+void Cell::setNum(double new_num)
+{
+    number = new_num;
+}
+
+double Cell::getNum()
+{
+    return number;
 }
 
 Cell::~Cell(){}
