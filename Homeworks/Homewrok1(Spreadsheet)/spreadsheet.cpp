@@ -1,6 +1,11 @@
+/*
+set floating parts as 2 digits 
+*/
+
+
 #include "Spreadsheet.h"
 #include "AnsiTerminal.h"
-
+#include "FormulaParser.h"
 #include<iostream>
 #include<vector>
 #include<string>
@@ -9,7 +14,7 @@
 */
 using namespace std;
 
-Spreadsheet::Spreadsheet(int line,int column)
+Spreadsheet::Spreadsheet(int line = 24,int column = 80)
 {
     vector<Cell>line_vec(column);
     for(int i = 0;i<line;i++)
@@ -28,6 +33,7 @@ string Spreadsheet::getFrame(int line, int column)
 
 void Spreadsheet::print_frame(AnsiTerminal& terminal)
 {
+    
     int rowStart = 1;
     int colStart = 1;
     int cellWidth = 10;
@@ -44,8 +50,16 @@ void Spreadsheet::print_frame(AnsiTerminal& terminal)
                 terminal.printAt(terminalRow, terminalCol, cellData + spaces + '|');
             else
             {
-                terminal.printAt(terminalRow, terminalCol, "formu" + spaces + '|');
-            }
+                FormulaParser parser(*this);
+                /*parser.set_type(i,j);
+                //formula_type = parser.get_type(i,j);
+                cout << getFrame(i,j);
+                cout << parser.get_operand_value(frame[i][j].getCell());*/
+                parser.relevant_func();
+                //terminal.printAt(terminalRow, terminalCol, "formu" + spaces + '|');
+                //terminal.printAt(terminalRow, terminalCol,frame[i][j].getCell() + spaces + '|');
+                terminal.printAt(terminalRow, terminalCol,to_string(parser.get_operand_value("B2")) + spaces + '|');
+            }    
         }
         cout << endl;
     }

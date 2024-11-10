@@ -7,7 +7,7 @@
 #include<string>
 
 using namespace std;
-
+class Spreadsheet;
 enum formula_type
 {
     SUM,
@@ -21,14 +21,18 @@ enum formula_type
 class FormulaParser
 {
     public:
+        FormulaParser(Spreadsheet& sheet) : tmp(sheet) {}
         void set_type(int i,int j);
         formula_type get_type(int i,int j);
+        void relevant_func();
+        
+        
         void Sum();
-        void other_calc(int i,int j);
-
+        void other_calc();
+        double get_operand_value(const string operand);
     private:
-        Spreadsheet& tmp;
         formula_type type;
+        Spreadsheet& tmp;
 };
 
 

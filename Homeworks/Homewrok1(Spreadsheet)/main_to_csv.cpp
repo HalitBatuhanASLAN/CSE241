@@ -6,7 +6,7 @@
 using namespace std;
 
 int main() {
-   File fileManager;
+    File fileManager;
     Spreadsheet spreadsheet(24, 80);
     std::string filename = "example.csv";
     spreadsheet = fileManager.load_data(filename);

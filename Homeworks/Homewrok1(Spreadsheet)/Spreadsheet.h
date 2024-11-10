@@ -6,8 +6,9 @@
 #include<iostream>
 #include<vector>
 #include "AnsiTerminal.h"
+#include "FormulaParser.h"
 using namespace std;
-
+class FormulaParser;
 class Spreadsheet
 {
     public:
@@ -19,6 +20,7 @@ class Spreadsheet
         void editCell(int line, int column,string value);
         string getFrame(int line, int column);
 
+        
         ~Spreadsheet();
     private:
         vector<vector<Cell>> frame;
