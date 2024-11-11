@@ -43,9 +43,9 @@ void Cell::set_dt()
     {    
         /*last changes happened here*/
         dt = Number;
-        string str = getCell();
+        /*string str = getCell();
         double new_num = stod(str);
-        setNum(new_num);
+        setNum(new_num);*/
     }
     else
         dt = str_type;
