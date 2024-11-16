@@ -6,7 +6,6 @@
 #include<iostream>
 #include<vector>
 #include "AnsiTerminal.h"
-#include "FormulaParser.h"
 using namespace std;
 class FormulaParser;
 class Spreadsheet

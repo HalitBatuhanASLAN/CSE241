@@ -28,7 +28,7 @@ class FormulaParser
         
         
         void Sum();
-        void other_calc(int i,int j);
+        Spreadsheet& other_calc(int i,int j);
         double get_operand_value(const string operand);
     private:
         formula_type type;

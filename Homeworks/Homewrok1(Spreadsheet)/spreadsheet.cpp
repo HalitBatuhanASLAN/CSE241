@@ -5,7 +5,10 @@ set floating parts as 2 digits
 
 #include "Spreadsheet.h"
 #include "AnsiTerminal.h"
-#include "FormulaParser.h"
+
+//#include "FormulaParser.h"
+
+#include"new_formula.h"
 #include<iostream>
 #include<vector>
 #include<string>
@@ -13,7 +16,7 @@ set floating parts as 2 digits
     *const for all headers
 */
 using namespace std;
-
+string alphabet = "ABCDEFGHIJ";
 Spreadsheet::Spreadsheet(int line = 24,int column = 20)
 {
     vector<Cell>line_vec(column);
@@ -25,8 +28,19 @@ Spreadsheet::Spreadsheet(int line = 24,int column = 20)
 int Spreadsheet::getLine(){return frame.size();}
 int Spreadsheet::getColumn(){return frame[0].size();}
 
-void Spreadsheet::editCell(int line, int column,string value)
+/*void Spreadsheet::editCell(int line, int column,string value)
 {frame[line][column].setCell(value);}
+*/
+void Spreadsheet::editCell(int line, int column, string value) {
+    frame[line][column].setCell(value);
+/*    if (frame[line][column].get_dt() == Formula) {
+        FormulaParser parser(*this);
+        parser.set_type(line, column);
+        parser.relevant_func(line, column);
+    }*/
+}
+
+
 string Spreadsheet::getFrame(int line, int column)
 {return frame[line][column].getCell();}
 
@@ -41,12 +55,22 @@ void Spreadsheet::print_frame(AnsiTerminal& terminal)
     
     for(int i = 0; i<24; i++)
     {
-        terminal.printAt(i,0,to_string(i) + "   ");
+        if(i>1)
+        {
+            int space_for_num = (i<10) ? 8 : 7;
+            terminal.printAt(i,0,to_string(i-1) + string(space_for_num ,' ') + '|');
+        }
         for(int j = 0; j<19; j++)
         {
+            if (i == 0 && j != 0)
+            {
+                string alpha(1, alphabet[j - 1]);
+                int terminalCol = colStart + (j-1) * cellWidth + 15;
+                terminal.printAt(i,terminalCol, alpha + "   |");
+            }
             string cellData = getFrame(i,j);
-            int terminalRow = rowStart + i * rowHeight ;
-            int terminalCol = colStart + j * cellWidth +5;
+            int terminalRow = rowStart + i * rowHeight +1;
+            int terminalCol = colStart + j * cellWidth +10;
             if(cellData.size() < cellWidth)
             {
                 string spaces(cellWidth - static_cast<int>(cellData.size()) - 1,' ');
@@ -54,18 +78,13 @@ void Spreadsheet::print_frame(AnsiTerminal& terminal)
                     terminal.printAt(terminalRow, terminalCol, cellData + spaces + '|');
                 else
                 {
-                    FormulaParser parser(*this);
-                    /*parser.set_type(i,j);
-                    //formula_type = parser.get_type(i,j);
-                    cout << getFrame(i,j);
-                    cout << parser.get_operand_value(frame[i][j].getCell());*/
-                    parser.relevant_func(i,j);
-                    //terminal.printAt(terminalRow, terminalCol, "formu" + spaces + '|');
-                    //terminal.printAt(terminalRow, terminalCol,frame[i][j].getCell() + spaces + '|');
-                    /*get operand value is working
-                    terminal.printAt(terminalRow, terminalCol,to_string(parser.get_operand_value("E5")) + spaces + '|');*/
-                    //terminal.printAt(terminalRow, terminalCol,to_string(frame[2][3].getNum()) + spaces + '|');
-                    terminal.printAt(terminalRow, terminalCol,to_string(parser.get_operand_value("E5")) + spaces + '|');
+                    //FormulaParser parser(*this);
+                    //parser.set_type(i,j);
+                    //parser.relevant_func(i,j);
+                    FormulaParser pars;
+                    *this = pars.parsing(*this,i,j);
+                    //terminal.printAt(terminalRow, terminalCol, "For" + spaces + '|');
+                    terminal.printAt(terminalRow, terminalCol,to_string(frame[i][j].getNum()));
                 }
             }
             else
@@ -75,18 +94,12 @@ void Spreadsheet::print_frame(AnsiTerminal& terminal)
                     terminal.printAt(terminalRow, terminalCol, sub + '|');
                 else
                 {
-                    FormulaParser parser(*this);
-                    /*parser.set_type(i,j);
-                    //formula_type = parser.get_type(i,j);
-                    cout << getFrame(i,j);
-                    cout << parser.get_operand_value(frame[i][j].getCell());*/
-                    parser.relevant_func(i,j);
-                    //terminal.printAt(terminalRow, terminalCol, "formu" + spaces + '|');
-                    //terminal.printAt(terminalRow, terminalCol,frame[i][j].getCell() + spaces + '|');
-                    /*get operand value is working
-                    terminal.printAt(terminalRow, terminalCol,to_string(parser.get_operand_value("E5")) + spaces + '|');*/
-                    //terminal.printAt(terminalRow, terminalCol,to_string(frame[2][3].getNum()) + spaces + '|');
-                    terminal.printAt(terminalRow, terminalCol,to_string(parser.get_operand_value("E5")) + '|');
+                    //FormulaParser parser(*this);
+                    //parser.set_type(i,j);
+                    //parser.relevant_func(i,j);
+                    FormulaParser pars;
+                    *this = pars.parsing(*this,i,j);
+                    terminal.printAt(terminalRow, terminalCol,to_string(frame[i][j].getNum()));
                 }
             }
         }

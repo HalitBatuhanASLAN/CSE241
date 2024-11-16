@@ -32,12 +32,14 @@ formula_type FormulaParser::get_type(int i,int j)
     return type;
 }
 
+
+
 void FormulaParser::relevant_func(int i,int j)
 {
     switch(type)                    
     {
         case SUM:
-            //sSum();
+            //Sum();
             break;
         case AVER:
 
@@ -54,13 +56,12 @@ void FormulaParser::relevant_func(int i,int j)
     }
 }
 
-
 /*void Sum()
 {
 
 }*/
-
-void FormulaParser::other_calc(int i,int j)
+/*
+Spreadsheet& FormulaParser::other_calc(int i,int j)
 {
     double res = 12,l_res,r_res;
     string expression = tmp.getFrame(i,j);
@@ -80,7 +81,7 @@ void FormulaParser::other_calc(int i,int j)
         current_delimeter = expression[end];
         start = end + 1;
         end = expression.find_first_of(delimeters,start);
-        /*r_item = expression.substr(start,end - start);*/
+        /*r_item = expression.substr(start,end - start);
         switch(current_delimeter)
         {
             case '+':
@@ -94,7 +95,7 @@ void FormulaParser::other_calc(int i,int j)
                 else
                     r_res = get_operand_value(r_item);
                 
-                res = l_res + r_res;*/
+                res = l_res + r_res;
                 res += l_res;
                 break;
             case '-':
@@ -124,7 +125,7 @@ void FormulaParser::other_calc(int i,int j)
                 res = l_res * r_res;
                 break;
             case '/':
-                /*add controller for divider 0 condition*/
+                /*add controller for divider 0 condition
                 if(l_item[0] <= '9' && l_item[0] >= '0')
                     l_res = stod(l_item);
                 else
@@ -145,7 +146,7 @@ void FormulaParser::other_calc(int i,int j)
     string res_str = to_string(res);
     tmp.editCell(tmp.getLine(),tmp.getColumn(),res_str);
 }
-
+*/
 
 double FormulaParser::get_operand_value(const string operand)
 {

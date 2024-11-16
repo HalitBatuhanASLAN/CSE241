@@ -5,6 +5,7 @@
 
 #include"Cell.h"
 #include<cstdlib>
+#include<string>
 #include<sstream>
 #include<iostream>
 using namespace std;
@@ -24,8 +25,7 @@ void Cell::setCell(string entered)
         str = entered;
     else
     {
-        stringstream ss(str);
-        ss >> number;
+        number = stod(entered);
     }
 }
 
@@ -43,6 +43,8 @@ void Cell::set_dt()
     {    
         /*last changes happened here*/
         dt = Number;
+        double num = stod(getCell());
+        setNum(num);
         /*string str = getCell();
         double new_num = stod(str);
         setNum(new_num);*/
