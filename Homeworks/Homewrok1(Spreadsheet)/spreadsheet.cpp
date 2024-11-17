@@ -22,6 +22,11 @@ Spreadsheet::Spreadsheet(int line = 24,int column = 20)
     vector<Cell>line_vec(column);
     for(int i = 0;i<line;i++)
         frame.push_back(line_vec);
+    for(int i = 0;i<24;i++)
+    {
+        for(int j = 0;j<20;j++)
+            frame[i][j].setNum(0);
+    }
 }
 
 
@@ -83,7 +88,6 @@ void Spreadsheet::print_frame(AnsiTerminal& terminal)
                     //parser.relevant_func(i,j);
                     FormulaParser pars;
                     *this = pars.parsing(*this,i,j);
-                    //terminal.printAt(terminalRow, terminalCol, "For" + spaces + '|');
                     terminal.printAt(terminalRow, terminalCol,to_string(frame[i][j].getNum()));
                 }
             }

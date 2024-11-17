@@ -60,9 +60,10 @@ int main() {
                 }
                 else if (isprint(key))
                 {
+                    input += key;
                     if (input.length() < cellWidth)
                     {
-                        input += key;
+                        //input += key;
                         terminal.printInvertedAt(row, col, string(1, key));
                         col = (col < 200) ? col + 1 : col;
                     }
