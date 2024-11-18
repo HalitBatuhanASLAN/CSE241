@@ -22,6 +22,7 @@ class FormulaParser
         double Max(string expression,Spreadsheet& tmp);
         double Min(string expression,Spreadsheet& tmp);
         double func_value(Spreadsheet& tmp,int i,int j,string main_expression);
+        double safeStringToDouble(string str, double defaultValue = 0.0);
     private:
 };
 
