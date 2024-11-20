@@ -11,85 +11,6 @@ using namespace std;
 #define MIN -111111111
 string COLUMN_ALPHABET = "ABCDEFGHIJ";
 
-/*Spreadsheet& FormulaParser::parsing(Spreadsheet& tmp, int i, int j)
-{
-    bool flag_err = true;
-    string delimeters = "+-/*";
-    string main_expression = tmp.getFrame(i, j);
-    double result = 0; // Initialize result
-    size_t position;
-
-    // Handle the initial left operand
-    if (main_expression[0] == '=')
-        main_expression = main_expression.substr(1); // Remove '=' for parsing
-
-    position = main_expression.find_first_of(delimeters);
-    if (position != string::npos)
-    {
-        string l_exp = main_expression.substr(0, position); // Leftmost operand
-        result = get_operand_value(l_exp, tmp); // Evaluate the first operand
-        main_expression = main_expression.substr(position); // Update to remaining expression
-    }
-
-    // Process remaining operations
-    while (!main_expression.empty() && flag_err)
-    {
-        position = main_expression.find_first_of(delimeters);
-        if (position == string::npos)
-            break;
-
-        char current_operator = main_expression[0]; // Extract operator
-        main_expression = main_expression.substr(1); // Remove operator
-
-        size_t next_position = main_expression.find_first_of(delimeters);
-        string r_exp;
-        if (next_position != string::npos)
-        {
-            r_exp = main_expression.substr(0, next_position); // Extract next operand
-            main_expression = main_expression.substr(next_position); // Remaining expression
-        }
-        else
-        {
-            r_exp = main_expression; // Last operand
-            main_expression = "";
-        }
-
-        // Evaluate the right operand
-        double r_value = get_operand_value(r_exp, tmp);
-
-        // Perform the operation
-        switch (current_operator)
-        {
-            case '+':
-                result += r_value;
-                break;
-            case '-':
-                result -= r_value;
-                break;
-            case '*':
-                result *= r_value;
-                break;
-            case '/':
-                if (r_value == 0)
-                    flag_err = false;
-                else
-                    result /= r_value;
-                break;
-            default:
-                flag_err = false;
-        }
-    }
-
-    // Update the cell with the result or an error
-    if (flag_err)
-        tmp.editCell(i, j, to_string(result));
-    else
-        tmp.editCell(i, j, "ERROR");
-
-    return tmp;
-}*/
-
-
 Spreadsheet& FormulaParser::parsing(Spreadsheet& tmp, int i, int j)
 {
     bool flag = true;
@@ -99,6 +20,7 @@ Spreadsheet& FormulaParser::parsing(Spreadsheet& tmp, int i, int j)
     int count = countDelimiters(main_expression, delimeters);
     size_t position;
     size_t next_pos;
+    bool first_iteration = true;
     double result = 0;
 
     while (count > 0)
@@ -119,15 +41,19 @@ Spreadsheet& FormulaParser::parsing(Spreadsheet& tmp, int i, int j)
                 r_exp = r_exp.substr(0, next_pos);
 
             double l_value, r_value;
-
-            if (!contain_func(l_exp))
+            if(first_iteration) // Only set l_value in the first iteration
             {
-                l_value = get_operand_value(l_exp, tmp);
-                flag = false;
-            }
-            else
-            {
-                l_value = func_value(tmp, i, j, l_exp);
+                if (!contain_func(l_exp))
+                {
+                    l_value = get_operand_value(l_exp, tmp);
+                    flag = false;
+                }
+                else
+                {
+                    l_value = func_value(tmp, i, j, l_exp);
+                }
+                result = l_value;
+                first_iteration = false;
             }
 
             if (!contain_func(r_exp))
@@ -146,31 +72,35 @@ Spreadsheet& FormulaParser::parsing(Spreadsheet& tmp, int i, int j)
             switch (first_operator)
             {
                 case '+':
-                    result = l_value + r_value;
+                    result += r_value;
                     break;
                 case '-':
-                    result = l_value - r_value;
+                    result -= r_value;
                     break;
                 case '*':
-                    result = l_value * r_value;
+                    result *= r_value;
                     break;
                 case '/':
                     if (r_value == 0)
                         flag_err = false;
                     else
-                        result = l_value / r_value;
+                        result /= r_value;
                     break;
                 default:
                     flag_err = false;
             }
 
             if (next_pos != string::npos)
-                main_expression = to_string(result) + main_expression.substr(position + next_pos+2);
+                main_expression = main_expression.substr(position + next_pos + 1);
         }
 
         count--;
     }
 
+    if(flag == true)
+    {
+        result = func_value(tmp,i,j,main_expression);
+    }
     if (flag_err)
         tmp.editCell(i, j, to_string(result));
     else
@@ -189,64 +119,6 @@ int FormulaParser::countDelimiters(const string& input, const string& delimiters
     }
     return count;
 }
-/*
-Spreadsheet& FormulaParser::parsing(Spreadsheet& tmp,int i, int j)
-{
-    bool flag = true;//for controlling if contains function
-    bool flag_err = true;
-    string delimeters = "+-/*";
-    string main_expression = tmp.getFrame(i,j);
-    size_t position = main_expression.find_first_of(delimeters);
-    double result;
-    if(position != string::npos)
-    {
-        char first_operator = main_expression[position];
-        string l_exp = main_expression.substr(1,position);
-        string r_exp = main_expression.substr(position+1);
-        double l_value;
-        double r_value;
-        if(!contain_func(l_exp))
-        {
-            l_value = get_operand_value(l_exp,tmp);
-            flag = false;
-        }
-        else{l_value = func_value(tmp,i,j,main_expression);}
-        if(!contain_func(r_exp))
-        {
-            r_value = get_operand_value(r_exp,tmp);
-            flag = false;
-        }
-        else{r_value = func_value(tmp,i,j,main_expression);}
-        if(r_value == ERR || l_value == ERR)
-            flag_err = false;
-        switch(first_operator)
-        {
-            case '+':
-                result = l_value + r_value;
-                break;
-            case '-':
-                result = l_value - r_value;
-                break;
-            case '*':
-                result = l_value * r_value;
-                break;
-            case '/':
-                result = l_value / r_value;
-                break;
-            default:
-                break;
-        }
-    }
-    if(flag == true)
-    {
-        result = func_value(tmp,i,j,main_expression);
-    }
-    if(flag_err)
-        tmp.editCell(i,j,to_string(result));
-    else
-        tmp.editCell(i,j,"ERROR");
-    return tmp;
-}*/
 
 double FormulaParser::func_value(Spreadsheet& tmp,int i,int j,string main_expression)
 {
@@ -425,3 +297,65 @@ bool FormulaParser::contain_func(string tmp)
         return true;
     return false;
 }
+
+/*---------------------------------------------------------------------------*/
+/*works with one operator*/
+/*
+Spreadsheet& FormulaParser::parsing(Spreadsheet& tmp,int i, int j)
+{
+    bool flag = true;//for controlling if contains function
+    bool flag_err = true;
+    string delimeters = "+-/*";
+    string main_expression = tmp.getFrame(i,j);
+    size_t position = main_expression.find_first_of(delimeters);
+    double result;
+    if(position != string::npos)
+    {
+        char first_operator = main_expression[position];
+        string l_exp = main_expression.substr(1,position);
+        string r_exp = main_expression.substr(position+1);
+        double l_value;
+        double r_value;
+        if(!contain_func(l_exp))
+        {
+            l_value = get_operand_value(l_exp,tmp);
+            flag = false;
+        }
+        else{l_value = func_value(tmp,i,j,main_expression);}
+        if(!contain_func(r_exp))
+        {
+            r_value = get_operand_value(r_exp,tmp);
+            flag = false;
+        }
+        else{r_value = func_value(tmp,i,j,main_expression);}
+        if(r_value == ERR || l_value == ERR)
+            flag_err = false;
+        switch(first_operator)
+        {
+            case '+':
+                result = l_value + r_value;
+                break;
+            case '-':
+                result = l_value - r_value;
+                break;
+            case '*':
+                result = l_value * r_value;
+                break;
+            case '/':
+                result = l_value / r_value;
+                break;
+            default:
+                break;
+        }
+    }
+    if(flag == true)
+    {
+        result = func_value(tmp,i,j,main_expression);
+    }
+    if(flag_err)
+        tmp.editCell(i,j,to_string(result));
+    else
+        tmp.editCell(i,j,"ERROR");
+    return tmp;
+}
+*/

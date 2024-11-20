@@ -58,6 +58,7 @@ void Spreadsheet::print_frame(AnsiTerminal& terminal)
     int cellWidth = 10;
     int rowHeight = 1;
     
+  
     for(int i = 0; i<24; i++)
     {
         if(i>1)
@@ -83,9 +84,6 @@ void Spreadsheet::print_frame(AnsiTerminal& terminal)
                     terminal.printAt(terminalRow, terminalCol, cellData + spaces + '|');
                 else
                 {
-                    //FormulaParser parser(*this);
-                    //parser.set_type(i,j);
-                    //parser.relevant_func(i,j);
                     FormulaParser pars;
                     *this = pars.parsing(*this,i,j);
                     terminal.printAt(terminalRow, terminalCol,to_string(frame[i][j].getNum()));
