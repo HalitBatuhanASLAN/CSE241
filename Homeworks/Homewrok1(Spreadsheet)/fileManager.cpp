@@ -6,7 +6,7 @@ using namespace std;
 
 Spreadsheet File::load_data(string file_name)
 {
-    Spreadsheet tmp(10,10);
+    Spreadsheet tmp(24,20);
     ifstream file(file_name);
     if(!file.is_open())
     {

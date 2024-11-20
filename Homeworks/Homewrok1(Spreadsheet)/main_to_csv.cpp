@@ -10,16 +10,13 @@ int main()
 {
     File fileManager;
     Spreadsheet spreadsheet(24, 20);
-    /*std::string filename = "example.csv";
+    /*string filename = "example.csv";
     spreadsheet = fileManager.load_data(filename);*/
 
 
     AnsiTerminal terminal;
     terminal.clearScreen();
 
-    /*cout << "\t\t\tWelcome to basic spreadsheet program\n";
-    cout << "To exit program enter(q)\n" << "To enter input enter(0)\n";
-    */
     const int cellWidth = 10;
     int row = 0, col = 0;
     terminal.printAt(row, col, "*");
