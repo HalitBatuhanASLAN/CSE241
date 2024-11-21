@@ -144,6 +144,8 @@ double FormulaParser::func_value(Spreadsheet& tmp,int i,int j,string main_expres
         result = Min(expression,tmp);
     return result;
 }
+
+
 double FormulaParser::Sum(string expression,Spreadsheet& tmp)
 {
     //expression like (A2..A4)
@@ -151,12 +153,15 @@ double FormulaParser::Sum(string expression,Spreadsheet& tmp)
     size_t position = expression.find_first_of(delim);
     string l_part = expression.substr(1,position-1);
     string r_part = expression.substr(position+2,expression.size()-position-3);
-    const string first_line = l_part.substr(1);//it keeps 2
+    
+    const string first_line = l_part.substr(letter_count(l_part));//it keeps 2
     int line_first = stoi(first_line);
-    const string last_line = r_part.substr(1);
+    const string last_line = r_part.substr(letter_count(r_part));
     int line_last = stoi(last_line);
-    int column_starting = COLUMN_ALPHABET.find(l_part[0]);
-    int end_column = COLUMN_ALPHABET.find(r_part[0]);
+    //int column_starting = COLUMN_ALPHABET.find(l_part[0]);
+    //int end_column = COLUMN_ALPHABET.find(r_part[0]);
+    int column_starting = column_value(l_part);
+    int end_column = column_value(r_part);
     double result = 0;
     while(line_first <= line_last)
     {
@@ -171,24 +176,42 @@ double FormulaParser::Sum(string expression,Spreadsheet& tmp)
     }
     return result;
 }
-
-double FormulaParser::Aver(string expression,Spreadsheet& tmp)
+double FormulaParser::Aver(string expression, Spreadsheet& tmp)
 {
-    //expression like (A2..A4)
+    // expression like (A2..A4)
     string delim = ".";
     size_t position = expression.find_first_of(delim);
-    string l_part = expression.substr(1,position-1);
-    string r_part = expression.substr(position+2,expression.size()-position-3);
-    const string first_line = l_part.substr(1);//it keeps 2
+    string l_part = expression.substr(1, position - 1); // Sol taraf (örneğin A2)
+    string r_part = expression.substr(position + 2, expression.size() - position - 3); // Sağ taraf (örneğin A4)
+
+    // Satır numaralarını ayır
+    const string first_line = l_part.substr(letter_count(l_part)); // Örneğin "2"
     int line_first = stoi(first_line);
-    const string last_line = r_part.substr(1);
+    const string last_line = r_part.substr(letter_count(r_part)); // Örneğin "4"
     int line_last = stoi(last_line);
-    int column = COLUMN_ALPHABET.find(l_part[0]);
-    double result = 0;
-    int quantity = line_last - line_first + 1;
-    result = Sum(expression,tmp);
-    /*for now it works but it divides sum to total cell unmber it should not contain empty or string cells*/
-    return result/quantity;
+
+    // Sütun değerlerini al
+    int column_starting = column_value(l_part); // Örneğin A = 0, B = 1, AA = 26
+    int end_column = column_value(r_part);
+
+    // Sum fonksiyonunu kullanarak toplamı hesapla
+    double result = Sum(expression, tmp);
+
+    // Geçerli hücrelerin sayısını hesapla
+    int valid_cells = 0;
+    while (line_first <= line_last) {
+        int col = column_starting;
+        while (col <= end_column) {
+            double tmp_num = safeStringToDouble(tmp.getFrame(line_first - 1, col));
+            if (tmp_num != ERR) { // Geçerli bir sayıysa sayacı artır
+                valid_cells++;
+            }
+            col++;
+        }
+        line_first++;
+    }
+
+    return valid_cells > 0 ? result / valid_cells : 0; // Geçerli hücre yoksa 0 döndür
 }
 
 double FormulaParser::Stddev(string expression,Spreadsheet& tmp)
@@ -217,65 +240,72 @@ double FormulaParser::Stddev(string expression,Spreadsheet& tmp)
     return stddev;
 }
 
-double FormulaParser::Max(string expression,Spreadsheet& tmp)
+double FormulaParser::Max(string expression, Spreadsheet& tmp)
 {
-    //expression like (A2..A4)
+    // expression like (A2..A4)
     string delim = ".";
     size_t position = expression.find_first_of(delim);
-    string l_part = expression.substr(1,position-1);
-    string r_part = expression.substr(position+2,expression.size()-position-3);
-    const string first_line = l_part.substr(1);//it keeps 2
+    string l_part = expression.substr(1, position - 1); // Sol taraf (örneğin A2)
+    string r_part = expression.substr(position + 2, expression.size() - position - 3); // Sağ taraf (örneğin A4)
+
+    // Satır numaralarını ayır
+    const string first_line = l_part.substr(letter_count(l_part)); // Örneğin "2"
     int line_first = stoi(first_line);
-    const string last_line = r_part.substr(1);
+    const string last_line = r_part.substr(letter_count(r_part)); // Örneğin "4"
     int line_last = stoi(last_line);
-    int column_starting = COLUMN_ALPHABET.find(l_part[0]);
-    int end_column = COLUMN_ALPHABET.find(r_part[0]);
-    double max_num  = safeStringToDouble(tmp.getFrame(line_first-1,column_starting),MIN);
-    max_num = (max_num == ERR) ? MIN : max_num ;double next;
-    while(line_first <= line_last)
-    {
+
+    // Sütun değerlerini al
+    int column_starting = column_value(l_part); // Örneğin A = 0, B = 1, AA = 26
+    int end_column = column_value(r_part);
+
+    double max_num = MIN; // Başlangıçta minimum değeri ata
+
+    while (line_first <= line_last) {
         int col = column_starting;
-        while(col <= end_column)
-        {
-            double tmp_num = safeStringToDouble(tmp.getFrame(line_first-1,col),MIN);
-            next = (tmp_num == ERR) ? MIN : tmp_num;
-            if(next > max_num)
-                max_num = next;    
+        while (col <= end_column) {
+            double tmp_num = safeStringToDouble(tmp.getFrame(line_first - 1, col), MIN);
+            if (tmp_num != ERR && tmp_num > max_num) { // Geçerli sayıysa kontrol et
+                max_num = tmp_num;
+            }
             col++;
         }
         line_first++;
     }
+
     return max_num;
 }
-double FormulaParser::Min(string expression,Spreadsheet& tmp)
+double FormulaParser::Min(string expression, Spreadsheet& tmp)
 {
-    //expression like (A2..A4)
+    // expression like (A2..A4)
     string delim = ".";
     size_t position = expression.find_first_of(delim);
-    string l_part = expression.substr(1,position-1);
-    string r_part = expression.substr(position+2,expression.size()-position-3);
-    const string first_line = l_part.substr(1);//it keeps 2
+    string l_part = expression.substr(1, position - 1); // Sol taraf (örneğin A2)
+    string r_part = expression.substr(position + 2, expression.size() - position - 3); // Sağ taraf (örneğin A4)
+
+    // Satır numaralarını ayır
+    const string first_line = l_part.substr(letter_count(l_part)); // Örneğin "2"
     int line_first = stoi(first_line);
-    const string last_line = r_part.substr(1);
+    const string last_line = r_part.substr(letter_count(r_part)); // Örneğin "4"
     int line_last = stoi(last_line);
-    int column_starting = COLUMN_ALPHABET.find(l_part[0]);
-    int column_end = COLUMN_ALPHABET.find(r_part[0]);
-    double min_num  = safeStringToDouble(tmp.getFrame(line_first-1,column_starting),MAX);
-    min_num = (min_num == ERR) ? MAX : min_num;
-    double next;
-    while(line_first <= line_last)
-    {
+
+    // Sütun değerlerini al
+    int column_starting = column_value(l_part); // Örneğin A = 0, B = 1, AA = 26
+    int end_column = column_value(r_part);
+
+    double min_num = MAX; // Başlangıçta maksimum değeri ata
+
+    while (line_first <= line_last) {
         int col = column_starting;
-        while(col <= column_end)
-        {
-            double tmp_num = safeStringToDouble(tmp.getFrame(line_first-1,col),MAX);
-            next = (tmp_num == ERR) ? MAX : tmp_num;
-            if(next < min_num)
-                min_num = next;
+        while (col <= end_column) {
+            double tmp_num = safeStringToDouble(tmp.getFrame(line_first - 1, col), MAX);
+            if (tmp_num != ERR && tmp_num < min_num) { // Geçerli sayıysa kontrol et
+                min_num = tmp_num;
+            }
             col++;
         }
         line_first++;
     }
+
     return min_num;
 }
 
@@ -323,4 +353,30 @@ bool FormulaParser::contain_func(string tmp)
         ||tmp.find("MIN") != string::npos)
         return true;
     return false;
+}
+
+
+
+int FormulaParser::letter_count(string expression)
+{
+    int count = 0;
+    for (char c : expression) {
+        if (isalpha(c)) {
+            count++;
+        } else {
+            break; // Sayıya ulaştığımızda dur
+        }
+    }
+    return count;
+}
+
+int FormulaParser::column_value(string operand)
+{
+    int count = letter_count(operand); // Sütun adının uzunluğunu al
+    string columnName = operand.substr(0, count); // Sütun kısmını al
+    int column = 0;
+    for (char c : columnName) {
+        column = column * 26 + (toupper(c) - 'A' + 1);
+    }
+    return column - 1;
 }

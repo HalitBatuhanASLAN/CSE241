@@ -1,8 +1,3 @@
-/*
-    *chech for exceptions like taking inputs
-*/
-
-
 #include"Cell.h"
 #include<cstdlib>
 #include<string>
@@ -15,13 +10,19 @@ string Cell::getCell()
     return inner_cell;
 }
 
-bool isValidNumber(const std::string& str) {
-    try {
+bool isValidNumber(const string& str)
+{
+    try
+    {
         std::stod(str);
         return true;
-    } catch (const std::invalid_argument&) {
+    }
+    catch (const std::invalid_argument&)
+    {
         return false;
-    } catch (const std::out_of_range&) {
+    }
+    catch (const std::out_of_range&)
+    {
         return false;
     }
 }
@@ -31,15 +32,14 @@ void Cell::setCell(std::string entered)
 {
     inner_cell = entered;
     set_dt();
-    if (get_dt() == Formula) {
+    if (get_dt() == Formula)
         formula = entered;
-    } else if (get_dt() == str_type) {
+    else if (get_dt() == str_type)
         str = entered;
-    } else if (isValidNumber(entered)) {
+    else if (isValidNumber(entered))
         number = std::stod(entered);
-    } else {
+    else
         str = entered;  // If conversion fails, treat as a string
-    }
 }
 
 /*

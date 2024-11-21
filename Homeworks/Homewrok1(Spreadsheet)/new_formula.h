@@ -24,6 +24,8 @@ class FormulaParser
         double func_value(Spreadsheet& tmp,int i,int j,string main_expression);
         double safeStringToDouble(string str, double defaultValue = 0.0);
         int countDelimiters(const string& input, const string& delimiters);
+        int column_value(string operand);
+        int letter_count(string expression);
     private:
 };
 
