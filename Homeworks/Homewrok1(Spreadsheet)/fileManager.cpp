@@ -4,55 +4,48 @@
 #include<string>
 using namespace std;
 
-Spreadsheet File::load_data(string file_name)
-{
-    Spreadsheet tmp(24,20);
+Spreadsheet File::load_data(string file_name,int size_line,int size_column) {
+    Spreadsheet tmp(size_line,size_column);
     ifstream file(file_name);
-    if(!file.is_open())
-    {
-        cerr << "File could not opened!!!" << endl;
-        exit(-1);
+    if (!file.is_open()) {
+        cerr << "File could not be opened! Please check the filename and try again." << endl;
+        return tmp;  // Returning an empty spreadsheet instead of exiting
+    } else {
+        cout << "File opened successfully." << endl;
     }
-    else
-        cout << "File opened\n";
+
     string line;
-    int line_counter = 0,column_counter = 0;
-    while(getline(file,line))
-    {
-        //cout << "inner line is: " << line << endl;
+    int line_counter = 0, column_counter = 0;
+    while (getline(file, line)) {
         string str;
-        for(char character : line)
-        {
-            //cout << line;
-            if(character != ',')
-            {    
-                //cout << character << endl;
+        for (char character : line) {
+            if (character != ',') {
                 str += character;
-            }
-            else if(character == ',' || character == '\n')
-            {
-                tmp.editCell(line_counter,column_counter,str);
-                //cout << line_counter << str << endl;
-                //cout << tmp.getFrame(line_counter,column_counter) << endl;
+            } else if (character == ',' || character == '\n') {
+                tmp.editCell(line_counter, column_counter, str);
                 column_counter++;
                 str.clear();
             }
         }
-        if (!str.empty())
-        {
+        if (!str.empty()) {
             tmp.editCell(line_counter, column_counter, str);
-            //tmp.getCell(line_counter, column_counter);
         }
         column_counter = 0;
         line_counter++;
-    }
-    cout << "file readed\n";
 
+        // Make sure we don't exceed spreadsheet dimensions
+        if (line_counter >= tmp.getLine()) {
+            break;
+        }
+    }
+
+    cout << "File read successfully." << endl;
     file.close();
     return tmp;
 }
 
-void save_file(Spreadsheet& tmp,string file_name)
+
+void File::save_file(Spreadsheet& tmp,string file_name)
 {
     ofstream file(file_name);
     if(!file.is_open())

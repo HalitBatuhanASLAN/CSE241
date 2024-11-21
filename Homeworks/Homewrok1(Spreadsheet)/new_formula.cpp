@@ -6,7 +6,7 @@
 #include<cmath>
 #include<algorithm>//for all_of_it
 using namespace std;
-#define ERR -9999999
+#define ERR -9999
 #define MAX 1000000000
 #define MIN -111111111
 string COLUMN_ALPHABET = "ABCDEFGHIJ";
@@ -22,7 +22,11 @@ Spreadsheet& FormulaParser::parsing(Spreadsheet& tmp, int i, int j)
     size_t next_pos;
     bool first_iteration = true;
     double result = 0;
-
+    bool is_func = contain_func(main_expression);
+    if(count == 0 && !is_func)
+    {
+        result = (get_operand_value(main_expression.substr(1),tmp));//=A5 -> A5
+    }
     while (count > 0)
     {
         position = main_expression.find_first_of(delimeters);
@@ -96,13 +100,15 @@ Spreadsheet& FormulaParser::parsing(Spreadsheet& tmp, int i, int j)
 
         count--;
     }
-
-    if(flag == true)
+    if(flag && is_func)
     {
         result = func_value(tmp,i,j,main_expression);
     }
     if (flag_err)
-        tmp.editCell(i, j, to_string(result));
+    {
+        tmp.set_num(i, j, (result));
+        //tmp.editCell(i, j, to_string(result));
+    }
     else
         tmp.editCell(i, j, "ERROR");
 
@@ -149,12 +155,18 @@ double FormulaParser::Sum(string expression,Spreadsheet& tmp)
     int line_first = stoi(first_line);
     const string last_line = r_part.substr(1);
     int line_last = stoi(last_line);
-    int column = COLUMN_ALPHABET.find(l_part[0]);
+    int column_starting = COLUMN_ALPHABET.find(l_part[0]);
+    int end_column = COLUMN_ALPHABET.find(r_part[0]);
     double result = 0;
     while(line_first <= line_last)
     {
-        double tmp_num = safeStringToDouble(tmp.getFrame(line_first-1,column));
-        result += (tmp_num == ERR ? 0 : tmp_num);
+        int col = column_starting;
+        while(col <= end_column)
+        {
+            double tmp_num = safeStringToDouble(tmp.getFrame(line_first-1,col));
+            result += (tmp_num == ERR ? 0 : tmp_num);
+            col++;
+        }
         line_first++;
     }
     return result;
@@ -176,11 +188,6 @@ double FormulaParser::Aver(string expression,Spreadsheet& tmp)
     int quantity = line_last - line_first + 1;
     result = Sum(expression,tmp);
     /*for now it works but it divides sum to total cell unmber it should not contain empty or string cells*/
-    /*while(line_first <= line_last)
-    {
-        result += stod(tmp.getFrame(line_first - 1,column));
-        line_first++;
-    }*/
     return result/quantity;
 }
 
@@ -221,15 +228,21 @@ double FormulaParser::Max(string expression,Spreadsheet& tmp)
     int line_first = stoi(first_line);
     const string last_line = r_part.substr(1);
     int line_last = stoi(last_line);
-    int column = COLUMN_ALPHABET.find(l_part[0]);
-    double max_num  = safeStringToDouble(tmp.getFrame(line_first-1,column),MIN);
+    int column_starting = COLUMN_ALPHABET.find(l_part[0]);
+    int end_column = COLUMN_ALPHABET.find(r_part[0]);
+    double max_num  = safeStringToDouble(tmp.getFrame(line_first-1,column_starting),MIN);
     max_num = (max_num == ERR) ? MIN : max_num ;double next;
     while(line_first <= line_last)
     {
-        double tmp_num = safeStringToDouble(tmp.getFrame(line_first-1,column),MIN);
-        next = (tmp_num == ERR) ? MIN : tmp_num;
-        if(next > max_num)
-            max_num = next;
+        int col = column_starting;
+        while(col <= end_column)
+        {
+            double tmp_num = safeStringToDouble(tmp.getFrame(line_first-1,col),MIN);
+            next = (tmp_num == ERR) ? MIN : tmp_num;
+            if(next > max_num)
+                max_num = next;    
+            col++;
+        }
         line_first++;
     }
     return max_num;
@@ -245,16 +258,22 @@ double FormulaParser::Min(string expression,Spreadsheet& tmp)
     int line_first = stoi(first_line);
     const string last_line = r_part.substr(1);
     int line_last = stoi(last_line);
-    int column = COLUMN_ALPHABET.find(l_part[0]);
-    double min_num  = safeStringToDouble(tmp.getFrame(line_first-1,column),MAX);
+    int column_starting = COLUMN_ALPHABET.find(l_part[0]);
+    int column_end = COLUMN_ALPHABET.find(r_part[0]);
+    double min_num  = safeStringToDouble(tmp.getFrame(line_first-1,column_starting),MAX);
     min_num = (min_num == ERR) ? MAX : min_num;
     double next;
     while(line_first <= line_last)
     {
-        double tmp_num = safeStringToDouble(tmp.getFrame(line_first-1,column),MAX);
-        next = (tmp_num == ERR) ? MAX : tmp_num;
-        if(next < min_num)
-            min_num = next;
+        int col = column_starting;
+        while(col <= column_end)
+        {
+            double tmp_num = safeStringToDouble(tmp.getFrame(line_first-1,col),MAX);
+            next = (tmp_num == ERR) ? MAX : tmp_num;
+            if(next < min_num)
+                min_num = next;
+            col++;
+        }
         line_first++;
     }
     return min_num;
@@ -264,8 +283,16 @@ double FormulaParser::get_operand_value(string expression,Spreadsheet& tmp)
 {
     if(std::all_of(expression.begin(), expression.end(), ::isdigit))
         return stod(expression);
-    int column = COLUMN_ALPHABET.find(expression[0]);
-    const string new_str = expression.substr(1);
+    int counter_letter = 0;
+    for(char c:expression)
+        if(isalpha(c))counter_letter++;
+    int column = 0,i = 0;
+    while (counter_letter > i) {
+        column = column * 26 + (toupper(expression[i]) - 'A' + 1); // Correct the calculation for base-26
+        i++;
+    }
+    column -= 1;
+    const string new_str = expression.substr(counter_letter);
     int line = stoi(new_str);
     double num;
     num = safeStringToDouble(tmp.getFrame(line-1,column));
@@ -297,65 +324,3 @@ bool FormulaParser::contain_func(string tmp)
         return true;
     return false;
 }
-
-/*---------------------------------------------------------------------------*/
-/*works with one operator*/
-/*
-Spreadsheet& FormulaParser::parsing(Spreadsheet& tmp,int i, int j)
-{
-    bool flag = true;//for controlling if contains function
-    bool flag_err = true;
-    string delimeters = "+-/*";
-    string main_expression = tmp.getFrame(i,j);
-    size_t position = main_expression.find_first_of(delimeters);
-    double result;
-    if(position != string::npos)
-    {
-        char first_operator = main_expression[position];
-        string l_exp = main_expression.substr(1,position);
-        string r_exp = main_expression.substr(position+1);
-        double l_value;
-        double r_value;
-        if(!contain_func(l_exp))
-        {
-            l_value = get_operand_value(l_exp,tmp);
-            flag = false;
-        }
-        else{l_value = func_value(tmp,i,j,main_expression);}
-        if(!contain_func(r_exp))
-        {
-            r_value = get_operand_value(r_exp,tmp);
-            flag = false;
-        }
-        else{r_value = func_value(tmp,i,j,main_expression);}
-        if(r_value == ERR || l_value == ERR)
-            flag_err = false;
-        switch(first_operator)
-        {
-            case '+':
-                result = l_value + r_value;
-                break;
-            case '-':
-                result = l_value - r_value;
-                break;
-            case '*':
-                result = l_value * r_value;
-                break;
-            case '/':
-                result = l_value / r_value;
-                break;
-            default:
-                break;
-        }
-    }
-    if(flag == true)
-    {
-        result = func_value(tmp,i,j,main_expression);
-    }
-    if(flag_err)
-        tmp.editCell(i,j,to_string(result));
-    else
-        tmp.editCell(i,j,"ERROR");
-    return tmp;
-}
-*/

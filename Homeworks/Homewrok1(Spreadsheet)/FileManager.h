@@ -10,7 +10,7 @@ using namespace std;
 class File
 {
     public:
-        Spreadsheet load_data(string file_name);
+        Spreadsheet load_data(string file_name,int size_line,int size_column);
         void save_file(Spreadsheet& tmp,string file_name);
     
     

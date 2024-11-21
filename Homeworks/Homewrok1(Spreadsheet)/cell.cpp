@@ -15,6 +15,34 @@ string Cell::getCell()
     return inner_cell;
 }
 
+bool isValidNumber(const std::string& str) {
+    try {
+        std::stod(str);
+        return true;
+    } catch (const std::invalid_argument&) {
+        return false;
+    } catch (const std::out_of_range&) {
+        return false;
+    }
+}
+
+
+void Cell::setCell(std::string entered)
+{
+    inner_cell = entered;
+    set_dt();
+    if (get_dt() == Formula) {
+        formula = entered;
+    } else if (get_dt() == str_type) {
+        str = entered;
+    } else if (isValidNumber(entered)) {
+        number = std::stod(entered);
+    } else {
+        str = entered;  // If conversion fails, treat as a string
+    }
+}
+
+/*
 void Cell::setCell(string entered)
 {
     inner_cell = entered;
@@ -27,7 +55,7 @@ void Cell::setCell(string entered)
     {
         number = stod(entered);
     }
-}
+}*/
 
 ostream& operator<<(ostream& out,Cell &tmp)
 {
