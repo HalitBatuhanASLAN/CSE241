@@ -56,6 +56,7 @@ string getColumnName(int index)
     return columnName;
 }
 
+
 void Spreadsheet::print_frame(AnsiTerminal& terminal)
 {
     
@@ -73,7 +74,7 @@ void Spreadsheet::print_frame(AnsiTerminal& terminal)
             terminal.printInvertedAt(i,0,to_string(i-1) + string(space_for_num ,' '));
             terminal.printAt(i,to_string(i-1).size() + space_for_num,"|");
         }
-        for(int j = 0; j<70; j++)
+        for(int j = 0; j<getColumn(); j++)
         {
             if (i == 0 && j != 0)
             {

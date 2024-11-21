@@ -22,7 +22,7 @@ void printMenu(AnsiTerminal &terminal,int line) {
     terminal.printAt(menuRow++, 0, " - '=STDDIV(A1..B3)' to standard derivation of values in rectangle formed by A1 and B3");
     terminal.printAt(menuRow++, 0, " - '=MAX(A1..B3)' to find maximum value in rectangle formed by A1 and B3");
     terminal.printAt(menuRow++, 0, " - '=MIN(A1..B3)' to find minimum value in rectangle formed by A1 and B3");
-    terminal.printAt(menuRow++, 0, " ");
+    terminal.printInvertedAt(menuRow++, 0, "");
 }
 
 string getColumnLabel(int columnIndex)
@@ -38,7 +38,7 @@ string getColumnLabel(int columnIndex)
 int main()
 {
     File fileManager;
-    Spreadsheet spreadsheet(35,70);
+    Spreadsheet spreadsheet(15,25);
     string filename;
 
     AnsiTerminal terminal;
@@ -51,6 +51,7 @@ int main()
     string input;
     char key;
 
+    int starting = 0;
     while (true) {
         terminal.clearScreen();
 
@@ -195,8 +196,14 @@ int main()
             {
                 case 'U': row = (row > 2) ? row - 1 : row; break;
                 case 'D': row = (row < spreadsheet.getLine()+1) ? row + 1 : row; break;
-                case 'R': col = (col + cellWidth < maxWidth) ? col + cellWidth : col; break;
-                case 'L': col = (col - cellWidth >= 10) ? col - cellWidth : col; break;
+                case 'R': col = (col + cellWidth < maxWidth) ? col + cellWidth : col; 
+                    if(col<=spreadsheet.getColumn())
+                        starting++;
+                    break;
+                case 'L': col = (col - cellWidth >= 10) ? col - cellWidth : col; 
+                    if(col>=1)
+                        starting--;
+                    break;
                 case 'q': return 0;
             }
         }
