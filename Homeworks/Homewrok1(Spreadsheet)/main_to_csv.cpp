@@ -35,6 +35,215 @@ string getColumnLabel(int columnIndex)
     return columnLabel;
 }
 
+/*gadasını aldığım çözüm*/
+
+int main()
+{
+    File fileManager;
+    Spreadsheet spreadsheet(30, 25);
+    string filename;
+
+    AnsiTerminal terminal;
+    terminal.clearScreen();
+
+    const int cellWidth = 10;
+    const int max_column = 15; // Sabit olarak aynı anda gösterilecek maksimum sütun sayısı
+    int starting_point = 0;    // Başlangıç sütun indeksi
+    int row = 2, col = 10;     // Start at cell A1, considering headers
+    terminal.printAt(row, col, "*");
+
+    string input;
+    char key;
+
+    while (true) {
+        terminal.clearScreen();
+
+        // 1. Display the current cell information at the top of the terminal
+        int cellRow = (row - 2); // Adjusted for actual row index, skipping header rows
+        int cellCol = (col / cellWidth) - 1 + starting_point; // Adjusted for actual column index
+        if (cellRow >= 0 && cellCol >= 0 && cellCol < spreadsheet.getColumn())
+        {
+            string columnLabel = getColumnLabel(cellCol);
+            string currentCell = "CELL: " + columnLabel + to_string(cellRow + 1);
+            terminal.printInvertedAt(0, 0, currentCell); // Place "CELL: ..." at the top
+        }
+
+        // 2. Display the spreadsheet from the third line onwards, with visible range
+        spreadsheet.print_frame(terminal, max_column, starting_point);
+
+        // 3. Display the input prompt at the bottom of the terminal
+        string cellValue = spreadsheet.getFrame(cellRow, cellCol);
+        if (cellRow >= 0 && cellRow < spreadsheet.getLine() && cellCol >= 0 && cellCol < spreadsheet.getColumn() && !cellValue.empty())
+        {
+            try {
+                double numValue = stod(cellValue);
+                stringstream stream;
+                stream << fixed << setprecision(2) << numValue;
+                input = stream.str();
+            } catch (const std::invalid_argument&) {
+                input = cellValue; // Not a number, use as string
+            }
+        }
+        else
+        {
+            input.clear();
+        }
+        string inputPrompt = "Input: " + input;
+        terminal.printAt(spreadsheet.getLine() + 3, 0, inputPrompt); // Assuming a total of 27 rows in the terminal (0-based index)
+
+        // 4. Display the current selection marker
+        terminal.printInvertedAt(row, col, "*");
+
+        // 5. Display the menu at the bottom of the terminal
+        printMenu(terminal, spreadsheet.getLine());
+
+        // 6. Get the key from the user for navigation or input
+        key = terminal.getSpecialKey();
+
+        if (key == '0') {
+            int pre_row = row;
+            int pre_col = col;
+            input.clear(); // Clear any previous input
+
+            // Allow the user to input a value for the current cell
+            while (true)
+            {
+                terminal.printAt(spreadsheet.getLine() + 3, 0, "Input: " + input + " "); // Add space to clear leftover characters
+
+                key = cin.get();
+                if (key == '\n') // If Enter key is pressed
+                {
+                    if (!input.empty())
+                    {
+                        cellRow = (row - 2); // Adjusted to match spreadsheet indexing
+                        cellCol = (pre_col / cellWidth) - 1 + starting_point; // Correct column index
+
+                        if (cellRow >= 0 && cellRow < spreadsheet.getLine() &&
+                            cellCol >= 0 && cellCol < spreadsheet.getColumn()) {
+                            try {
+                                double numValue = stod(input);
+                                stringstream stream;
+                                stream << fixed << setprecision(2) << numValue;
+                                spreadsheet.editCell(cellRow, cellCol, stream.str());
+                            } catch (const std::invalid_argument&) {
+                                spreadsheet.editCell(cellRow, cellCol, input); // Use as string if not a valid number
+                            }
+                        }
+
+                        input.clear(); // Clear input after updating
+                    }
+                    break; // Exit input loop after Enter key
+                }
+                else if (isprint(key)) // If printable character is pressed
+                {
+                    input += key;
+                    if (input.length() < cellWidth) {
+                        terminal.printAt(spreadsheet.getLine() + 3, 0, "Input: " + input); // Update input display
+                    }
+                }
+                else if (key == 127 || key == '\b') // Handle backspace key
+                {
+                    if (!input.empty()) {
+                        input.pop_back();
+                        terminal.printAt(spreadsheet.getLine() + 3, 0, "Input: " + input + " "); // Add space to clear leftover characters
+                    }
+                }
+            }
+
+            row = pre_row; // Reset the cursor row after input
+            col = pre_col; // Reset the cursor column after input
+        }
+        else if (key == 'f')
+        {
+            terminal.printAt(spreadsheet.getLine() + 3, 0, "Enter filename: " + filename + " ");
+            char key;
+            while (true) {
+                key = cin.get();
+                if (key == '\n') { // If Enter key is pressed
+                    break;
+                } else if (isprint(key)) { // If printable character is pressed
+                    filename += key;
+                    terminal.printAt(spreadsheet.getLine() + 3, 0, "Enter filename: " + filename + " ");
+                } else if (key == 127 || key == '\b') { // Handle backspace key
+                    if (!filename.empty()) {
+                        filename.pop_back();
+                        terminal.printAt(spreadsheet.getLine() + 3, 0, "Enter filename: " + filename + " ");
+                    }
+                }
+            }
+            spreadsheet = fileManager.load_data(filename, spreadsheet.getLine(), spreadsheet.getColumn());
+        }
+        else if (key == 's') {
+            terminal.printAt(spreadsheet.getLine() + 3, 0, "Enter filename to save: " + filename + " ");
+            filename.clear();
+            while (true) {
+                key = cin.get();
+                if (key == '\n') { // If Enter key is pressed
+                    break;
+                } else if (isprint(key)) { // If printable character is pressed
+                    filename += key;
+                    terminal.printAt(spreadsheet.getLine() + 3, 0, "Enter filename to save: " + filename + " ");
+                } else if (key == 127 || key == '\b') { // Handle backspace key
+                    if (!filename.empty()) {
+                        filename.pop_back();
+                        terminal.printAt(26, 0, "Enter filename to save: " + filename + " ");
+                    }
+                }
+            }
+            fileManager.save_file(spreadsheet, filename);
+        }
+        else {
+            terminal.printAt(row, col, " "); // Clear the previous cursor
+            int maxWidth = spreadsheet.getColumn() * cellWidth;
+            switch (key)
+            {
+                case 'U': row = (row > 2) ? row - 1 : row; break;
+                case 'D': row = (row < spreadsheet.getLine() + 1) ? row + 1 : row; break;
+                case 'R':
+                    if (col / cellWidth - 1 < max_column - 1) {
+                        col += cellWidth;
+                    } else if (starting_point + max_column < spreadsheet.getColumn()) {
+                        starting_point++;
+                    }
+                    break;
+                case 'L':
+                    if (col / cellWidth - 1 > 0) {
+                        col -= cellWidth;
+                    } else if (starting_point > 0) {
+                        starting_point--;
+                    }
+                    break;
+                case 'q': return 0;
+            }
+        }
+
+        terminal.printInvertedAt(row, col, "*");
+    }
+
+    terminal.clearScreen();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 int main()
 {
     File fileManager;
@@ -215,3 +424,4 @@ int main()
     terminal.clearScreen();
     return 0;
 }
+*/
