@@ -14,7 +14,7 @@ string getColumnLabel(int columnIndex);
 int main()
 {
     File fileManager;
-    Spreadsheet spreadsheet(35, 45); // Initialize a spreadsheet with 35 rows and 45 columns
+    Spreadsheet spreadsheet(1500,1500); // Initialize a spreadsheet with 35 rows and 45 columns
     string filename;
 
     AnsiTerminal terminal;
