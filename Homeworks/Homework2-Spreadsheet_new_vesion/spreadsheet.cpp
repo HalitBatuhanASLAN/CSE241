@@ -2,7 +2,7 @@
 #include "AnsiTerminal.h"
 #include <sstream>
 #include <iomanip>
-#include "new_formula.h"
+#include "new_formula.h"           /********************big5 eklenecek************ */
 #include <iostream>
 #include <vector>
 #include <string>
