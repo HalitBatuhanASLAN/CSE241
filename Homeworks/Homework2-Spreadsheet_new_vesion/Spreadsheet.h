@@ -63,7 +63,7 @@ namespace spread
             ~Spreadsheet();
         private:
             // A 2D vector to store the cells in the spreadsheet
-            std::unique_ptr<unique_ptr<Cell[]>[]> frame;
+            std::shared_ptr<shared_ptr<shared_ptr<Cell>[]>[]> frame;
             int line;
             int column;
     };

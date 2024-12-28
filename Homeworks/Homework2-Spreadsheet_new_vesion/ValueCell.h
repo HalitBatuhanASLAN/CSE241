@@ -6,17 +6,13 @@
 #include<string>
 using namespace std;
 
-template<class T>
 class ValueCell: public Cell
 {
     public:
-        void setCell(const T& in);
-        const T& getCell();
+        void setCell(const string& in);
+        const string& getCell();
     private:
-        int intValue;
-        double doubleValue;
-        string stringValue;
+        
 };
-
 
 #endif

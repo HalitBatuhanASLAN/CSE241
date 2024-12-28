@@ -7,29 +7,29 @@
 #include <vector>
 #include <string>
 #include<memory>
+#include"FormulaCell.h"
+#include"IntValue.h"
+#include"DoubleValue.h"
+#include"StringValue.h"
+
 using namespace std;
 using namespace spread;
 // Constructor to initialize the spreadsheet with given dimensions (rows and columns)
 namespace spread
 {
-    Spreadsheet::Spreadsheet(int line = 24, int column = 20):line(line),column(column)
+    Spreadsheet::Spreadsheet(int line = 24, int column = 20):line(line),column(column),
+    frame(std::make_shared<std::shared_ptr<shared_ptr<Cell>[]>[]>(line))
     {
-        frame = make_unique<unique_ptr<Cell[]>[]>(line);
         for (int i = 0; i < line; i++)
-            frame[i] = make_unique<Cell[]>(column);
-        for (int i = 0; i < line; i++)
-        {
-            for (int j = 0; j < column; j++)
-                frame[i][j].setNum(0); // Initialize each cell with 0   
-        }
+            frame[i] = make_shared<shared_ptr<Cell>[]>();
     }
 
     Spreadsheet::Spreadsheet(const Spreadsheet& other)
-    : line(other.line), column(other.column), frame(std::make_unique<std::unique_ptr<Cell[]>[]>(other.line))
+    : line(other.line), column(other.column), frame(std::make_shared<std::shared_ptr<shared_ptr<Cell>[]>[]>(other.line))
     {
         for (int i = 0; i < line; i++)
         {
-            frame[i] = std::make_unique<Cell[]>(column);
+            frame[i] = std::make_shared<shared_ptr<Cell>[]>(column);
             for (int j = 0; j < column; ++j)
                 frame[i][j] = other.frame[i][j];
         }
@@ -45,10 +45,10 @@ namespace spread
         line = other.line;
         column = other.column;
 
-        frame = std::make_unique<std::unique_ptr<Cell[]>[]>(line);
+        frame = std::make_shared<std::shared_ptr<shared_ptr<Cell>[]>[]>(line);
         for (int i = 0; i < line; ++i)
         {
-            frame[i] = std::make_unique<Cell[]>(column);
+            frame[i] = std::make_shared<shared_ptr<Cell>[]>(column);
             for (int j = 0; j < column; ++j)
                 frame[i][j] = other.frame[i][j];
         }
@@ -62,11 +62,44 @@ namespace spread
 
     // Edits the value of a specific cell in the spreadsheet
     void Spreadsheet::editCell(int line, int column, string value)
-    {frame[line][column].setCell(value);}
+    {
+        if(value[0] == '=')
+        {
+            frame[line][column] = make_shared<FormulaCell>();
+            frame[line][column]->setCell(value);
+        }
+        else
+        {
+            try
+            {
+                stoi(value);
+                frame[line][column] = make_shared<IntValue>();
+                frame[line][column]->setCell(value);
+            }
+            catch(...)
+            {
+                try
+                {
+                    stod(value);
+                    frame[line][column] = make_shared<DoubleValue>();
+                    frame[line][column]->setCell(value);
+
+                }
+                catch(...)
+                {
+                    frame[line][column] = make_shared<StringValue>();
+                    frame[line][column]->setCell(value);                
+                }
+                
+            }
+            
+        }
+
+    }
 
     // Retrieves the content of a specific cell in the spreadsheet
     string Spreadsheet::getFrame(int line, int column)
-    {return frame[line][column].getCell();}
+    {return frame[line][column]->getCell();}
 
     // Utility function to convert a column index into a column name (e.g., 0 -> "A", 27 -> "AA")
     string getColumnName(int index)

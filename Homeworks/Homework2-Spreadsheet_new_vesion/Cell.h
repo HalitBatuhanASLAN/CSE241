@@ -5,14 +5,11 @@
 #include<string>
 using namespace std;
 
-template<class T>
 class Cell
 {
     public:
-        virtual void setCell(const T& in);
-        virtual const T& getCell();
-    private:
-        T input;
+        virtual void setCell(const string& in);
+        virtual const string& getCell();
 };
 
 #endif

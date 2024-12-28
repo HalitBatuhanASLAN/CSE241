@@ -6,12 +6,11 @@
 #include<string>
 using namespace std;
 
-template<class T>
 class FormulaCell:public Cell
 {
     public:
-        void setCell(const T& in);
-        const T& getCell();
+        void setCell(const string& in);
+        const string& getCell();
     private:
         string formulas;
 };
