@@ -46,9 +46,18 @@ int main()
 
         // 2. Display the spreadsheet from the third line onwards, within the visible range
         spreadsheet.print_frame(terminal, max_column, starting_point, max_line, start_line);
-
+        
         // 3. Display the input prompt at the bottom of the terminal
-        string cellValue = spreadsheet.getFrame(cellRow, cellCol);
+        string cellValue;
+        try
+        {
+            cellValue = spreadsheet.getFrame(cellRow, cellCol);
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << "not working" << '\n';
+        }
+        
         if (cellRow >= 0 && cellRow < spreadsheet.getLine() && cellCol >= 0 && cellCol < spreadsheet.getColumn() && !cellValue.empty())
         {
             try

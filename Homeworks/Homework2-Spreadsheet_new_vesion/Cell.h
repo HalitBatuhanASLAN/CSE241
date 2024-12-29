@@ -8,8 +8,12 @@ using namespace std;
 class Cell
 {
     public:
-        virtual void setCell(const string& in);
-        virtual const string& getCell();
+        void setCell(const string& in);
+        const string getCell();
+        virtual ~Cell() = 0;
+        Cell();
+    private:
+        string tmp;
 };
 
 #endif

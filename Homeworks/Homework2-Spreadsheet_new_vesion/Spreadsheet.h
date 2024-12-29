@@ -25,10 +25,10 @@ namespace spread
 
 
             // Returns the number of rows (lines) in the spreadsheet
-            int getLine();
+            int getLine()const;
 
             // Returns the number of columns in the spreadsheet
-            int getColumn();
+            int getColumn()const;
 
             // Prints the spreadsheet frame to the terminal
             // Parameters:
@@ -63,7 +63,8 @@ namespace spread
             ~Spreadsheet();
         private:
             // A 2D vector to store the cells in the spreadsheet
-            std::shared_ptr<shared_ptr<shared_ptr<Cell>[]>[]> frame;
+            //std::shared_ptr<shared_ptr<shared_ptr<Cell>[]>[]> frame;
+            std::unique_ptr<std::unique_ptr<std::shared_ptr<Cell>[]>[]> frame;
             int line;
             int column;
     };

@@ -7,7 +7,7 @@ class DoubleValue : public ValueCell
 {
     public:
         void setCell(const string& in);
-        const string& getCell();
+        const string getCell();
     private:
         double double_value;
 };

@@ -10,9 +10,9 @@ class ValueCell: public Cell
 {
     public:
         void setCell(const string& in);
-        const string& getCell();
+        const string getCell();
     private:
-        
+        string tmp_value;
 };
 
 #endif

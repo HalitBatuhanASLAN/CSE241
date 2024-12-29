@@ -7,7 +7,7 @@ class IntValue : public ValueCell
 {
     public:
         void setCell(const string& in);
-        const string& getCell();
+        const string getCell();
     private:
         int int_value;
 };

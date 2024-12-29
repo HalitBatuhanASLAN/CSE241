@@ -10,7 +10,7 @@ class FormulaCell:public Cell
 {
     public:
         void setCell(const string& in);
-        const string& getCell();
+        const string getCell();
     private:
         string formulas;
 };
