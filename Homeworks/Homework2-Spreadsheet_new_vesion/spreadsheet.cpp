@@ -173,8 +173,101 @@ namespace spread
                             string cellData = frame[i][j]->getCell();
                             string displayValue;
                             
+
+                            if(typeid(*frame[i][j]).name() == typeid(StringValue).name())
+                            {
+                                displayValue = cellData;
+                            }
+                            else if(typeid(*frame[i][j]).name() == typeid(IntValue).name())
+                            {
+                                try {
+                                    int num_int = stod(cellData);
+                                    stringstream stream;
+                                    stream << num_int;
+                                    displayValue = stream.str();
+                                } catch (...) {
+                                    displayValue = cellData;
+                                }
+                            }
+                            else if(typeid(*frame[i][j]).name() == typeid(DoubleValue).name())
+                            {
+                                try {
+                                    double doubleValue = stod(cellData);
+                                    stringstream stream;
+                                    stream << fixed << setprecision(2) << doubleValue;
+                                    displayValue = stream.str();
+                                } catch (...) {
+                                    displayValue = cellData;
+                                }
+                            }
+                            else if(typeid(*frame[i][j]).name() == typeid(FormulaCell).name())
+                            {
+                                try {
+                                    displayValue = frame[i][j]->getCell();
+                                    formulaParsing::FormulaParser pars;
+                                    *this = pars.parsing(*this, i, j);
+                                    string result = frame[i][j]->getCell();
+
+                                    frame[i][j]->setCell(displayValue);
+                                    //displayValue = result;
+
+                                    double numValue = stod(result);
+                                    int int_num = stoi(result);
+                                    stringstream stream;
+                                    if(numValue - int_num == 0.000000)
+                                        stream << int_num;
+                                    else
+                                        stream << fixed << setprecision(2) << numValue;
+                                    displayValue = stream.str();
+                                } catch (...) {
+                                    displayValue = frame[i][j]->getCell();
+                                }
+                            }
+                            else
+                            {
+                                displayValue = cellData;
+                            }
+
+
+
+
+                            // Truncate or pad the display value
+                            if(displayValue.size() >= cellWidth)
+                            {
+                                displayValue = displayValue.substr(0, cellWidth - 1);
+                                terminal.printAt(terminalRow, terminalCol, displayValue + "|");
+                            }
+                            else
+                            {
+                                string spaces(cellWidth - displayValue.size() - 1, ' ');
+                                terminal.printAt(terminalRow, terminalCol, displayValue + spaces + "|");
+                            }
+                        }
+                        catch (...) {
+                            terminal.printAt(terminalRow, terminalCol, string(cellWidth - 1, ' ') + "|");
+                        }
+                    }
+                    else
+                    {
+                        terminal.printAt(terminalRow, terminalCol, string(cellWidth - 1, ' ') + "|");
+                    }
+                }
+            }
+        }
+    }
+
+
+    // Sets a numeric value to a specific cell in the spreadsheet
+    void Spreadsheet::set_num(int i, int j, double new_num)
+    {frame[i][j]->setCell(to_string(new_num));}
+
+    // Destructor to clean up resources used by the spreadsheet
+    Spreadsheet::~Spreadsheet() {}
+}
+
+
                             // Handle different cell types
-                            if(dynamic_cast<StringValue*>(frame[i][j].get()) != nullptr)
+                            /*if(dynamic_cast<StringValue*>(frame[i][j].get()) != nullptr)
                             {
                                 displayValue = cellData;
                             }
@@ -220,38 +313,4 @@ namespace spread
                             else
                             {
                                 displayValue = cellData;
-                            }
-
-                            // Truncate or pad the display value
-                            if(displayValue.size() >= cellWidth)
-                            {
-                                displayValue = displayValue.substr(0, cellWidth - 1);
-                                terminal.printAt(terminalRow, terminalCol, displayValue + "|");
-                            }
-                            else
-                            {
-                                string spaces(cellWidth - displayValue.size() - 1, ' ');
-                                terminal.printAt(terminalRow, terminalCol, displayValue + spaces + "|");
-                            }
-                        }
-                        catch (...) {
-                            terminal.printAt(terminalRow, terminalCol, string(cellWidth - 1, ' ') + "|");
-                        }
-                    }
-                    else
-                    {
-                        terminal.printAt(terminalRow, terminalCol, string(cellWidth - 1, ' ') + "|");
-                    }
-                }
-            }
-        }
-    }
-
-
-    // Sets a numeric value to a specific cell in the spreadsheet
-    void Spreadsheet::set_num(int i, int j, double new_num)
-    {frame[i][j]->setCell(to_string(new_num));}
-
-    // Destructor to clean up resources used by the spreadsheet
-    Spreadsheet::~Spreadsheet() {}
-}
+                            }*/
