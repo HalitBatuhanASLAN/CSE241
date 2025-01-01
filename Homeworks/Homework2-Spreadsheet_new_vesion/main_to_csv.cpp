@@ -165,7 +165,14 @@ int main()
                     }
                 }
             }
-            spreadsheet = fileManager.load_data(filename, spreadsheet.getLine(), spreadsheet.getColumn()); // Load data from file
+            try
+            {
+                spreadsheet = fileManager.load_data(filename, spreadsheet.getLine(), spreadsheet.getColumn()); // Load data from file
+            }
+            catch(...)
+            {
+                terminal.printAt(max_line + 2, 0, "Problem wtih file readining");
+            }
         }
         else if (key == 's')
         {
@@ -190,7 +197,14 @@ int main()
                     }
                 }
             }
-            fileManager.save_file(spreadsheet, filename); // Save data to file
+            try
+            {
+                fileManager.save_file(spreadsheet, filename); // Save data to file
+            }
+            catch(...)
+            {
+                terminal.printAt(max_line + 2, 0, "Problem wtih file writing");
+            }
         }
         else
         {
