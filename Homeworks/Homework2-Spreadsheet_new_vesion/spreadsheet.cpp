@@ -87,7 +87,7 @@ namespace spread
 
         if (value[0] == '=') {
             // Handle formula cell
-            frame[row][col] = std::make_shared<FormulaCell>();
+            frame[row][col] = std::make_shared<FormulaCell<double>>();
             frame[row][col]->setCell(value);
         } 
         else {
@@ -200,7 +200,7 @@ namespace spread
                                     displayValue = cellData;
                                 }
                             }
-                            else if(typeid(*frame[i][j]).name() == typeid(FormulaCell).name())
+                            else if(typeid(*frame[i][j]).name() == typeid(FormulaCell<double>).name())
                             {
                                 try {
                                     displayValue = frame[i][j]->getCell();

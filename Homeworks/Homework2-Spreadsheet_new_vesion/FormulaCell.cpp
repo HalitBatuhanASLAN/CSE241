@@ -1,12 +1,19 @@
 #include"FormulaCell.h"
 namespace spread
 {
-    void FormulaCell::setCell(const string& in)
+    template<class T>
+    void FormulaCell<T>::setCell(const string& in)
     {
         formulas = in;
     }
-    const string FormulaCell::getCell()
+    template<class T>
+    const string FormulaCell<T>::getCell()
     {
         return formulas;
     }
+    template<class T>
+    const T& FormulaCell<T>::getValue(){return value;}
+    template<class T>
+    void FormulaCell<T>::setValue(const T& val){value = val;}
 }
+//I deleted impleention of formula cell in makefile because it gives problem when I try to use it with templates
