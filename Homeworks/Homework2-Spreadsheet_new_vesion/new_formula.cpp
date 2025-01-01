@@ -407,7 +407,11 @@ namespace formulaParsing
         int line = stoi(new_str);
 
         // Get the numeric value from the specified cell in the spreadsheet
-        double num = safeStringToDouble(tmp.getFrame(line - 1, column));
+        double num;
+        if(tmp.getFrame(line-1,column)[0] == '=')
+            num = 999999;
+        else
+            num = safeStringToDouble(tmp.getFrame(line - 1, column));
         return num;
     }
 
