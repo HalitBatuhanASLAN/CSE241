@@ -120,7 +120,10 @@ namespace formulaParsing
         if (flag_err)
             tmp.set_num(i, j, (result));
         else
+        {
             tmp.editCell(i, j, "ERROR"); // Update the cell with "ERROR" if an error occurred
+            throw("ERROR");
+        }
         return tmp; // Return the updated spreadsheet
     }
 

@@ -2,14 +2,15 @@
 #define STRINGVALUE_H
 
 #include"ValueCell.h"
-
-class StringValue : public ValueCell
+namespace spread
 {
-    public:
-        void setCell(const string& in);
-        const string getCell();
-    private:
-        string str_value;
-};
-
+    class StringValue : public ValueCell
+    {
+        public:
+            void setCell(const string& in);
+            const string getCell();
+        private:
+            string str_value;
+    };
+}
 #endif

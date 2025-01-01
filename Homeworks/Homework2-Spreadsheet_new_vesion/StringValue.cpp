@@ -1,11 +1,13 @@
 #include"StringValue.h"
 
-
-void StringValue::setCell(const string& in)
+namespace spread
 {
-    str_value = in;
-}
-const string StringValue::getCell()
-{
-    return str_value;
+    void StringValue::setCell(const string& in)
+    {
+        str_value = in;
+    }
+    const string StringValue::getCell()
+    {
+        return str_value;
+    }
 }

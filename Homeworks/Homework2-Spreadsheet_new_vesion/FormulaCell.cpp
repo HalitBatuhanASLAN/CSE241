@@ -1,10 +1,12 @@
 #include"FormulaCell.h"
-
-void FormulaCell::setCell(const string& in)
+namespace spread
 {
-    formulas = in;
-}
-const string FormulaCell::getCell()
-{
-    return formulas;
+    void FormulaCell::setCell(const string& in)
+    {
+        formulas = in;
+    }
+    const string FormulaCell::getCell()
+    {
+        return formulas;
+    }
 }

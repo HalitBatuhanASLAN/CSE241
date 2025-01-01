@@ -5,14 +5,16 @@
 #include<iostream>
 #include<string>
 using namespace std;
-
-class FormulaCell:public Cell
+namespace spread
 {
-    public:
-        void setCell(const string& in);
-        const string getCell();
-    private:
-        string formulas;
-};
+    class FormulaCell:public Cell
+    {
+        public:
+            void setCell(const string& in);
+            const string getCell();
+        private:
+            string formulas;
+    };
+}
 
 #endif

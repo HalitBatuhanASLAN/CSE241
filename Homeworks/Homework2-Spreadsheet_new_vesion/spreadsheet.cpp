@@ -205,14 +205,14 @@ void Spreadsheet::print_frame(AnsiTerminal& terminal, int max_column, int starti
                                 string result = frame[i][j]->getCell();
 
                                 frame[i][j]->setCell(displayValue);
-                                displayValue = result;
+                                //displayValue = result;
 
                                 double numValue = stod(result);
                                 stringstream stream;
                                 stream << fixed << setprecision(2) << numValue;
                                 displayValue = stream.str();
                             } catch (...) {
-                                //displayValue = frame[i][j]->getCell();
+                                displayValue = frame[i][j]->getCell();
                             }
                         }
                         else

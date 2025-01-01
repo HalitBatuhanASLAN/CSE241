@@ -7,6 +7,7 @@
 #include <iomanip>
 using namespace std;
 using namespace spread;
+using namespace Utils;
 // Function declarations
 void printMenu(AnsiTerminal &terminal, int line);
 string getColumnLabel(int columnIndex);
