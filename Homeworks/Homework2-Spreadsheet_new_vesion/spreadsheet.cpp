@@ -95,21 +95,17 @@ namespace spread
             try {
                 // Try to parse as integer
                 int intVal = std::stoi(value);
-                frame[row][col] = std::make_shared<IntValue>();
+                double doubleValue = stod(value);
+                if(intVal - doubleValue == 0.000000)
+                    frame[row][col] = std::make_shared<IntValue>();
+                else
+                    frame[row][col] = std::make_shared<DoubleValue>();
                 frame[row][col]->setCell(value);
             }
-            catch (const std::invalid_argument&) {
-                try {
-                    // Try to parse as double
-                    double doubleVal = std::stod(value);
-                    frame[row][col] = std::make_shared<DoubleValue>();
-                    frame[row][col]->setCell(value);
-                }
-                catch (const std::invalid_argument&) {
-                    // If not a number, treat as string
+            catch (const std::invalid_argument&)
+            {
                     frame[row][col] = std::make_shared<StringValue>();
-                    frame[row][col]->setCell(value);
-                }
+                    frame[row][col]->setCell(value);    
             }
         }
     }
@@ -187,8 +183,12 @@ namespace spread
                             {
                                 try {
                                     double numValue = stod(cellData);
+                                    int num_int = stod(cellData);
                                     stringstream stream;
-                                    stream << fixed << setprecision(2) << numValue;
+                                    if(numValue - num_int == 0.00000)
+                                        stream << num_int;
+                                    else
+                                        stream << fixed << setprecision(2) << numValue;
                                     displayValue = stream.str();
                                 } catch (...) {
                                     displayValue = cellData;
@@ -206,8 +206,12 @@ namespace spread
                                     //displayValue = result;
 
                                     double numValue = stod(result);
+                                    int int_num = stoi(result);
                                     stringstream stream;
-                                    stream << fixed << setprecision(2) << numValue;
+                                    if(numValue - int_num == 0.000000)
+                                        stream << int_num;
+                                    else
+                                        stream << fixed << setprecision(2) << numValue;
                                     displayValue = stream.str();
                                 } catch (...) {
                                     displayValue = frame[i][j]->getCell();

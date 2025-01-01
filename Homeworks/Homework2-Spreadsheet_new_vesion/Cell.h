@@ -7,8 +7,6 @@ using namespace std;
 
 namespace spread
 {
-
-
     class Cell
     {
         public:

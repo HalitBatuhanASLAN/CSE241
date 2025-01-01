@@ -64,8 +64,12 @@ int main()
             try
             {
                 double numValue = stod(cellValue); // Try converting cell value to a number
+                int num_int = stoi(cellValue);
                 stringstream stream;
-                stream << fixed << setprecision(2) << numValue;
+                if(numValue - num_int == 0)
+                    stream << num_int;
+                else
+                    stream << fixed << setprecision(3) << numValue;
                 input = stream.str();
             }
             catch (const std::invalid_argument&) {
@@ -111,8 +115,13 @@ int main()
                             try 
                             {
                                 double numValue = stod(input); // Try converting input to a number
+                                int num_int = stoi(input);
                                 stringstream stream;
-                                stream << fixed << setprecision(2) << numValue;
+                                if(numValue - num_int == 0)
+                                    stream << num_int;
+                                else
+                                    stream << fixed << setprecision(3) << numValue;
+                                input = stream.str();
                                 spreadsheet.editCell(cellRow, cellCol, stream.str());
                             }
                             catch (const std::invalid_argument&){
