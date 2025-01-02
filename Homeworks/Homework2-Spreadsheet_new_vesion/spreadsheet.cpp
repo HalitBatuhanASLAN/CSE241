@@ -208,16 +208,28 @@ namespace spread
                                     *this = pars.parsing(*this, i, j);
                                     string result = frame[i][j]->getCell();
 
-                                    frame[i][j]->setCell(displayValue);
+                                    //frame[i][j]->setCell(displayValue);
                                     //displayValue = result;
 
                                     double numValue = stod(result);
                                     int int_num = stoi(result);
                                     stringstream stream;
-                                    if(numValue - int_num == 0.000000)
-                                        stream << int_num;
-                                    else
+                                    if(numValue - int_num != 0.00)
+                                    {
                                         stream << fixed << setprecision(2) << numValue;
+                                        auto doubleFormulaCell = make_shared<FormulaCell<double>>();
+                                        doubleFormulaCell->setValue(numValue);
+                                        doubleFormulaCell->setCell(displayValue);
+                                        frame[i][j] = doubleFormulaCell;
+                                    }
+                                    else
+                                    {
+                                        stream << int_num;
+                                        auto intFormulaCell = make_shared<FormulaCell<int>>();
+                                        intFormulaCell->setValue(int_num);
+                                        intFormulaCell->setCell(displayValue);
+                                        frame[i][j] = intFormulaCell;
+                                    }
                                     displayValue = stream.str();
                                 } catch (...) {
                                     displayValue = frame[i][j]->getCell();
@@ -259,7 +271,7 @@ namespace spread
 
     // Sets a numeric value to a specific cell in the spreadsheet
     void Spreadsheet::set_num(int i, int j, double new_num)
-    {frame[i][j]->setCell(to_string(new_num));}
+        {frame[i][j]->setCell(to_string(new_num));}
 
     // Destructor to clean up resources used by the spreadsheet
     Spreadsheet::~Spreadsheet() {}
