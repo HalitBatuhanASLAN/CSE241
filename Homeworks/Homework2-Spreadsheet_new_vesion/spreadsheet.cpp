@@ -200,7 +200,8 @@ namespace spread
                                     displayValue = cellData;
                                 }
                             }
-                            else if(typeid(*frame[i][j]).name() == typeid(FormulaCell<double>).name())
+                            else if(typeid(*frame[i][j]).name() == typeid(FormulaCell<double>).name() 
+                                    || typeid(*frame[i][j]).name() == typeid(FormulaCell<int>).name())
                             {
                                 try {
                                     displayValue = frame[i][j]->getCell();
@@ -214,11 +215,11 @@ namespace spread
                                     double numValue = stod(result);
                                     int int_num = stoi(result);
                                     stringstream stream;
-                                    if(numValue - int_num == 0.000000)
+                                    /*if(numValue - int_num == 0.000000)
                                         stream << int_num;
                                     else
-                                        stream << fixed << setprecision(2) << numValue;
-                                    /*if(numValue - int_num != 0.00)
+                                        stream << fixed << setprecision(2) << numValue;*/
+                                    if(numValue - int_num != 0.00)
                                     {
                                         stream << fixed << setprecision(2) << numValue;
                                         auto doubleFormulaCell = make_shared<FormulaCell<double>>();
@@ -233,7 +234,7 @@ namespace spread
                                         intFormulaCell->setValue(int_num);
                                         intFormulaCell->setCell(displayValue);
                                         frame[i][j] = intFormulaCell;
-                                    }*/
+                                    }
                                     displayValue = stream.str();
                                 } catch (...) {
                                     displayValue = frame[i][j]->getCell();
@@ -243,6 +244,7 @@ namespace spread
                             {
                                 displayValue = cellData;
                             }
+
 
                             // Truncate or pad the display value
                             if(displayValue.size() >= cellWidth)
