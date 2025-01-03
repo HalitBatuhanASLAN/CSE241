@@ -276,6 +276,35 @@ namespace spread
     void Spreadsheet::set_num(int i, int j, double new_num)
     {frame[i][j]->setCell(to_string(new_num));}
 
+    double Spreadsheet::get_num(int i, int j)
+    {
+        if(auto doubleFormulaCell = std::dynamic_pointer_cast<FormulaCell<double>>(frame[i][j]))
+        {
+            //doubleFormulaCell->setValue(900.99);
+            auto numValue = doubleFormulaCell->getValue();      // Mevcut sayısal değeri al
+            auto displayValue = doubleFormulaCell->getCell();
+
+            doubleFormulaCell->setValue(numValue);         // Sayısal değeri güncelle
+            doubleFormulaCell->setCell(displayValue);
+
+            frame[i][j] = doubleFormulaCell;
+            return numValue;
+        }
+        else if(auto intFormulaCell = std::dynamic_pointer_cast<FormulaCell<int>>(frame[i][j]))
+        {
+            //intFormulaCell->setValue(100);
+            auto numValue = intFormulaCell->getValue();      // Mevcut sayısal değeri al
+            auto displayValue = intFormulaCell->getCell();
+
+            intFormulaCell->setValue(numValue);         // Sayısal değeri güncelle
+            intFormulaCell->setCell(displayValue);
+
+            frame[i][j] = intFormulaCell;
+            return numValue;
+        }
+        return -987654;
+    }
+
     // Destructor to clean up resources used by the spreadsheet
     Spreadsheet::~Spreadsheet() {}
 }

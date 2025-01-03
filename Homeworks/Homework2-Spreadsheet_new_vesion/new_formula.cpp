@@ -409,7 +409,7 @@ namespace formulaParsing
         // Get the numeric value from the specified cell in the spreadsheet
         double num;
         if(tmp.getFrame(line-1,column)[0] == '=')
-            num = 1907;
+            num = tmp.get_num(line-1,column);
         else
             num = safeStringToDouble(tmp.getFrame(line - 1, column));
         return num;
