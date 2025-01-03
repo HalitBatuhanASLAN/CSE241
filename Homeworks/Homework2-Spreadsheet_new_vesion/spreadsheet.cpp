@@ -19,7 +19,7 @@ using namespace spread;
 // Constructor to initialize the spreadsheet with given dimensions (rows and columns)
 namespace spread
 {
-    
+
     Spreadsheet::Spreadsheet(int line, int column): line(line), column(column)
     {
         frame = std::make_unique<std::unique_ptr<std::shared_ptr<Cell>[]>[]>(line);
@@ -116,12 +116,12 @@ namespace spread
     {
         if (line < 0 || line >= this->line || column < 0 || column >= this->column)
             throw std::out_of_range("Cell index out of bounds");
-            
+
         if (frame[line][column] == nullptr)
             return "";
 
         return frame[line][column]->getCell();
-        
+
     }
 
 
@@ -172,7 +172,7 @@ namespace spread
                         try {
                             string cellData = frame[i][j]->getCell();
                             string displayValue;
-                            
+
 
                             if(typeid(*frame[i][j]).name() == typeid(StringValue).name())
                             {
@@ -208,13 +208,17 @@ namespace spread
                                     *this = pars.parsing(*this, i, j);
                                     string result = frame[i][j]->getCell();
 
-                                    //frame[i][j]->setCell(displayValue);
+                                    frame[i][j]->setCell(displayValue);
                                     //displayValue = result;
 
                                     double numValue = stod(result);
                                     int int_num = stoi(result);
                                     stringstream stream;
-                                    if(numValue - int_num != 0.00)
+                                    if(numValue - int_num == 0.000000)
+                                        stream << int_num;
+                                    else
+                                        stream << fixed << setprecision(2) << numValue;
+                                    /*if(numValue - int_num != 0.00)
                                     {
                                         stream << fixed << setprecision(2) << numValue;
                                         auto doubleFormulaCell = make_shared<FormulaCell<double>>();
@@ -229,7 +233,7 @@ namespace spread
                                         intFormulaCell->setValue(int_num);
                                         intFormulaCell->setCell(displayValue);
                                         frame[i][j] = intFormulaCell;
-                                    }
+                                    }*/
                                     displayValue = stream.str();
                                 } catch (...) {
                                     displayValue = frame[i][j]->getCell();
@@ -239,9 +243,6 @@ namespace spread
                             {
                                 displayValue = cellData;
                             }
-
-
-
 
                             // Truncate or pad the display value
                             if(displayValue.size() >= cellWidth)
@@ -271,12 +272,11 @@ namespace spread
 
     // Sets a numeric value to a specific cell in the spreadsheet
     void Spreadsheet::set_num(int i, int j, double new_num)
-        {frame[i][j]->setCell(to_string(new_num));}
+    {frame[i][j]->setCell(to_string(new_num));}
 
     // Destructor to clean up resources used by the spreadsheet
     Spreadsheet::~Spreadsheet() {}
 }
-
 
                             // Handle different cell types
                             /*if(dynamic_cast<StringValue*>(frame[i][j].get()) != nullptr)
