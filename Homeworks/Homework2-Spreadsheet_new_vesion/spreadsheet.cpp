@@ -2,7 +2,7 @@
 #include "AnsiTerminal.h"
 #include <sstream>
 #include <iomanip>
-#include "new_formula.h"           /********************big5 eklenecek************ */
+#include "new_formula.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -16,7 +16,6 @@
 
 using namespace std;
 using namespace spread;
-// Constructor to initialize the spreadsheet with given dimensions (rows and columns)
 namespace spread
 {
 
@@ -73,9 +72,6 @@ namespace spread
 
     void Spreadsheet::editCell(int row, int col, const std::string value)
     {
-        /*frame[row][col] = std::make_shared<StringValue>();
-        frame[row][col]->setCell(value);
-        return;*/
         if (row < 0 || row >= line || col < 0 || col >= column) {
             throw std::out_of_range("Cell index out of bounds");
         }
@@ -210,15 +206,10 @@ namespace spread
                                     string result = frame[i][j]->getCell();
 
                                     frame[i][j]->setCell(displayValue);
-                                    //displayValue = result;
 
                                     double numValue = stod(result);
                                     int int_num = stoi(result);
                                     stringstream stream;
-                                    /*if(numValue - int_num == 0.000000)
-                                        stream << int_num;
-                                    else
-                                        stream << fixed << setprecision(2) << numValue;*/
                                     if(numValue - int_num != 0.00)
                                     {
                                         stream << fixed << setprecision(2) << numValue;
@@ -280,11 +271,10 @@ namespace spread
     {
         if(auto doubleFormulaCell = std::dynamic_pointer_cast<FormulaCell<double>>(frame[i][j]))
         {
-            //doubleFormulaCell->setValue(900.99);
-            auto numValue = doubleFormulaCell->getValue();      // Mevcut sayısal değeri al
+            auto numValue = doubleFormulaCell->getValue();
             auto displayValue = doubleFormulaCell->getCell();
 
-            doubleFormulaCell->setValue(numValue);         // Sayısal değeri güncelle
+            doubleFormulaCell->setValue(numValue);
             doubleFormulaCell->setCell(displayValue);
 
             frame[i][j] = doubleFormulaCell;
@@ -292,68 +282,17 @@ namespace spread
         }
         else if(auto intFormulaCell = std::dynamic_pointer_cast<FormulaCell<int>>(frame[i][j]))
         {
-            //intFormulaCell->setValue(100);
-            auto numValue = intFormulaCell->getValue();      // Mevcut sayısal değeri al
+            auto numValue = intFormulaCell->getValue();
             auto displayValue = intFormulaCell->getCell();
 
-            intFormulaCell->setValue(numValue);         // Sayısal değeri güncelle
+            intFormulaCell->setValue(numValue);
             intFormulaCell->setCell(displayValue);
 
             frame[i][j] = intFormulaCell;
             return numValue;
         }
-        return -987654;
+        return 0;
     }
-
     // Destructor to clean up resources used by the spreadsheet
     Spreadsheet::~Spreadsheet() {}
 }
-
-                            // Handle different cell types
-                            /*if(dynamic_cast<StringValue*>(frame[i][j].get()) != nullptr)
-                            {
-                                displayValue = cellData;
-                            }
-                            else if(dynamic_cast<IntValue*>(frame[i][j].get()) != nullptr || 
-                                    dynamic_cast<DoubleValue*>(frame[i][j].get()) != nullptr)
-                            {
-                                try {
-                                    double numValue = stod(cellData);
-                                    int num_int = stod(cellData);
-                                    stringstream stream;
-                                    if(numValue - num_int == 0.00000)
-                                        stream << num_int;
-                                    else
-                                        stream << fixed << setprecision(2) << numValue;
-                                    displayValue = stream.str();
-                                } catch (...) {
-                                    displayValue = cellData;
-                                }
-                            }
-                            else if(dynamic_cast<FormulaCell*>(frame[i][j].get()) != nullptr)
-                            {
-                                try {
-                                    displayValue = frame[i][j]->getCell();
-                                    formulaParsing::FormulaParser pars;
-                                    *this = pars.parsing(*this, i, j);
-                                    string result = frame[i][j]->getCell();
-
-                                    frame[i][j]->setCell(displayValue);
-                                    //displayValue = result;
-
-                                    double numValue = stod(result);
-                                    int int_num = stoi(result);
-                                    stringstream stream;
-                                    if(numValue - int_num == 0.000000)
-                                        stream << int_num;
-                                    else
-                                        stream << fixed << setprecision(2) << numValue;
-                                    displayValue = stream.str();
-                                } catch (...) {
-                                    displayValue = frame[i][j]->getCell();
-                                }
-                            }
-                            else
-                            {
-                                displayValue = cellData;
-                            }*/

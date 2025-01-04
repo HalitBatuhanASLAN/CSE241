@@ -63,7 +63,6 @@ namespace spread
 
             // Destructor to clean up resources used by the spreadsheet
             ~Spreadsheet();
-            //std::unique_ptr<std::unique_ptr<std::shared_ptr<Cell>[]>[]> frame;
         private:
             // A 2D vector to store the cells in the spreadsheet
             std::unique_ptr<std::unique_ptr<std::shared_ptr<Cell>[]>[]> frame;
