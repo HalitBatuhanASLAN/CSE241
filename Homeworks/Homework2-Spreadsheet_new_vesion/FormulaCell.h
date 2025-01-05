@@ -7,17 +7,20 @@
 using namespace std;
 namespace spread
 {
+    /*inherit from Cell class*/
+    /*a templeted class to keep both integer and double values too*/
     template<class T>
     class FormulaCell:public Cell
     {
         public:
             void setCell(const string& in);
             const string getCell();
+            /*for templeted value*/
             void setValue(const T& val);
             const T& getValue();
         private:
             string formulas;
-            T value;
+            T value;/*attributes to keep value even integer or double*/
     };
 
     template<class T>

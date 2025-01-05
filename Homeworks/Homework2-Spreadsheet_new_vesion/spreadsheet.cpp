@@ -18,7 +18,7 @@ using namespace std;
 using namespace spread;
 namespace spread
 {
-
+    /*creating frame according to line and column values*/
     Spreadsheet::Spreadsheet(int line, int column): line(line), column(column)
     {
         frame = std::make_unique<std::unique_ptr<std::shared_ptr<Cell>[]>[]>(line);
@@ -32,6 +32,7 @@ namespace spread
         }
     }
 
+    /*copy constructor*/
     Spreadsheet::Spreadsheet(const Spreadsheet& other):line(other.line), column(other.column)
     {
         frame = std::make_unique<std::unique_ptr<std::shared_ptr<Cell>[]>[]>(line);
@@ -87,7 +88,7 @@ namespace spread
             frame[row][col]->setCell(value);
         } 
         else {
-            //use typeid for double, string instead of try-catch stoi-d ...
+            /*according to input edit cell as double-interger-string value*/
             try {
                 // Try to parse as integer
                 int intVal = std::stoi(value);
@@ -107,7 +108,7 @@ namespace spread
     }
 
 
-
+    /*get specific cells input and check for error cases*/
     string Spreadsheet::getFrame(int line, int column)
     {
         if (line < 0 || line >= this->line || column < 0 || column >= this->column)
@@ -133,7 +134,7 @@ namespace spread
         return columnName;
     }
 
-
+    /*priting frame to screen*/
     void Spreadsheet::print_frame(AnsiTerminal& terminal, int max_column, int starting_point, int max_line, int starting_row)
     {
         int rowStart = 1;
@@ -174,6 +175,7 @@ namespace spread
                             {
                                 displayValue = cellData;
                             }
+                            /*assign display value to int num*/
                             else if(typeid(*frame[i][j]).name() == typeid(IntValue).name())
                             {
                                 try {
@@ -185,6 +187,7 @@ namespace spread
                                     displayValue = cellData;
                                 }
                             }
+                            /*assign display value to double num*/
                             else if(typeid(*frame[i][j]).name() == typeid(DoubleValue).name())
                             {
                                 try {
@@ -196,6 +199,7 @@ namespace spread
                                     displayValue = cellData;
                                 }
                             }
+                            /*if cell is FormulaCell type than try to get formulasResult*/
                             else if(typeid(*frame[i][j]).name() == typeid(FormulaCell<double>).name() 
                                     || typeid(*frame[i][j]).name() == typeid(FormulaCell<int>).name())
                             {
@@ -210,6 +214,7 @@ namespace spread
                                     double numValue = stod(result);
                                     int int_num = stoi(result);
                                     stringstream stream;
+                                    /*according to type of input set FormulaCells informations*/
                                     if(numValue - int_num != 0.00)
                                     {
                                         stream << fixed << setprecision(2) << numValue;
@@ -237,7 +242,7 @@ namespace spread
                             }
 
 
-                            // Truncate or pad the display value
+                            // according to size print the display value
                             if(displayValue.size() >= cellWidth)
                             {
                                 displayValue = displayValue.substr(0, cellWidth - 1);
@@ -267,10 +272,13 @@ namespace spread
     void Spreadsheet::set_num(int i, int j, double new_num)
     {frame[i][j]->setCell(to_string(new_num));}
 
+    /*to take value inside a formulaCell*/
     double Spreadsheet::get_num(int i, int j)
     {
+        /*by using dynamic casting try to find type inside cell*/
         if(auto doubleFormulaCell = std::dynamic_pointer_cast<FormulaCell<double>>(frame[i][j]))
         {
+            /*set number and formula inside cell to formulaCell class*/
             auto numValue = doubleFormulaCell->getValue();
             auto displayValue = doubleFormulaCell->getCell();
 
@@ -282,6 +290,7 @@ namespace spread
         }
         else if(auto intFormulaCell = std::dynamic_pointer_cast<FormulaCell<int>>(frame[i][j]))
         {
+            /*set number and formula inside cell to formulaCell class*/
             auto numValue = intFormulaCell->getValue();
             auto displayValue = intFormulaCell->getCell();
 

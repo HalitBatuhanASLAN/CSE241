@@ -4,6 +4,7 @@
 using namespace std;
 namespace spread
 {
+    /*set and get values into cell*/
     void ValueCell::setCell(const string& in)
     {
         tmp_value = in;

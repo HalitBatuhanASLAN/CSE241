@@ -117,6 +117,7 @@ namespace formulaParsing
             result = func_value(tmp, i, j, main_expression);
 
         // If no errors occurred, update the cell with the result
+        /*keep formulas result at cell for future needings*/
         if (flag_err)
             tmp.set_num(i, j, (result));
         else
@@ -407,6 +408,7 @@ namespace formulaParsing
         int line = stoi(new_str);
 
         // Get the numeric value from the specified cell in the spreadsheet
+        /*if cell contains a formula get that result which you set previously*/
         double num;
         if(tmp.getFrame(line-1,column)[0] == '=')
             num = tmp.get_num(line-1,column);

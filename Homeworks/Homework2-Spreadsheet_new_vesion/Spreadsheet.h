@@ -53,6 +53,12 @@ namespace spread
             // - new_num: Numeric value to be set
             void set_num(int i, int j, double new_num);
 
+            /*
+            * get value in formula cell
+            * Parameters:
+            * - i: Row index of the cell
+            * - j: Column index of the cell
+            */
             double get_num(int i, int j);
 
             // Retrieves the value of a specific cell in the spreadsheet as a string

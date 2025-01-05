@@ -6,6 +6,8 @@
 #include <sstream>
 #include <iomanip>
 using namespace std;
+
+/*2 special namespaces to make code more readable*/
 using namespace spread;
 using namespace Utils;
 // Function declarations
@@ -63,9 +65,10 @@ int main()
         {
             try
             {
-                double numValue = stod(cellValue); // Try converting cell value to a number
-                int num_int = stoi(cellValue);
+                double numValue = stod(cellValue); // Try converting cell value to a double
+                int num_int = stoi(cellValue); //try to convert number to integer
                 stringstream stream;
+                /*checking for numbers type and keeps it as integer or double*/
                 if(numValue - num_int == 0)
                     stream << num_int;
                 else
@@ -115,8 +118,9 @@ int main()
                             try 
                             {
                                 double numValue = stod(input); // Try converting input to a number
-                                int num_int = stoi(input);
+                                int num_int = stoi(input); //try to convert number to integer
                                 stringstream stream;
+                                /*find values type*/
                                 if(numValue - num_int == 0)
                                     stream << num_int;
                                 else

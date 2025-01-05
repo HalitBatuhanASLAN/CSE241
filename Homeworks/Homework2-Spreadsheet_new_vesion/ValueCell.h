@@ -7,13 +7,14 @@
 using namespace std;
 namespace spread
 {
+    /*derived class of abstract Cell class*/
     class ValueCell: public Cell
     {
         public:
             void setCell(const string& in);
             const string getCell();
         private:
-            string tmp_value;
+            string tmp_value;/*to keep value inside cell*/
     };
 }
 #endif
